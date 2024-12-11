@@ -6,7 +6,7 @@
 ## Planned Features
 
 - **User Authentication**: Implement login and registration for personalized data tracking.
-- **File Upload**: Support for CSV, JSON, and Excel file parsing.
+- **File Upload**: Support for XML, Excel & JSON file parsing.
 - **Flight Data Visualization**: Graphs and charts to represent flight statistics and trends.
 - **Personalized Yearly Summary**: Automatic generation of a yearly flight summary with key statistics.
 - **API Integration**: Develop a simple API for user data processing and interaction.
