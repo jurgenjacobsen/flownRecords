@@ -24,10 +24,13 @@
 ### Stage 1 (Basic Backend)
 - [ ] Develop API routes to handle backend logic.
 - [ ] Imprement data parsing to convert supported format into JSON
+    - [x] XML FlightLogger LogBook Support
+    - [x] XLXS FlownRecords Template Support
+    - [ ] JSON FlownRecords Template Support *(Still considering)*
 - [ ] Create basic analysis and trend function to be used later
 
 ### Stage 2 (Basic Frontend)
-- [ ] Implement file upload for CSV, JSON, and Excel formats.
+- [ ] Implement file upload for XML, JSON, and Excel formats.
 - [ ] Build the user interface for data visualization and trend analysis.
 - [ ] Integrate yearly summary generation and display using graphs.
 - [ ] Create user profile display (yet without user login just guest profile).
