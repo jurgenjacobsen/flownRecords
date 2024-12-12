@@ -1,6 +1,6 @@
 # Flown Records
 
-**Flown Records** is a flight tracking platform that allows pilots to upload, analyze, and visualize their flight data. The platform processes flight logs from supported file formats (CSV, JSON, and Excel), generates insightful statistics, and provides trend analysis. At the end of each year, users receive a personalized summary, similar to Spotify Wrapped, showcasing their flight achievements.
+**Flown Records** is a flight tracking platform that allows pilots to upload, analyze, and visualize their flight data. The platform processes flight logs from supported file formats (XML, JSON, and Excel), generates insightful statistics, and provides trend analysis. At the end of each year, users receive a personalized summary, similar to Spotify Wrapped, showcasing their flight achievements.
 
 *Project started 11/12/2024*
 ## Planned Features

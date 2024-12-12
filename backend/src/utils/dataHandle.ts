@@ -56,7 +56,7 @@ const XLXSpropParseMap: any = {
     'Flight Date': 'flightDate',
     'Departure': 'departure',
     'Off Block': 'offBlock',
-    'On Block': 'onblock',
+    'On Block': 'onBlock',
     'Destination': 'destination',
     'Aircraft Type': 'aircraftType',
     'Registration': 'aircraftReg',
