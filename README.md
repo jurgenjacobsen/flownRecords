@@ -23,10 +23,16 @@
 
 ### Stage 1 (Basic Backend)
 - [ ] Develop API routes to handle backend logic.
-- [ ] Imprement data parsing to convert supported format into JSON
+- [ ] Add user authentication (login, registration, and data tracking).
+    - [x] User Registration
+    - [ ] User Login
+    - [ ] User Authentication Middleware
+    - [ ] User Previleges and Permissions
+    - [ ] Platform database register data for global analysis
+- [x] Imprement data parsing to convert supported format into JSON
     - [x] XML FlightLogger LogBook Support
     - [x] XLXS FlownRecords Template Support
-    - [ ] JSON FlownRecords Template Support *(Still considering)*
+    - [x] JSON FlownRecords Template Support
 - [ ] Create basic analysis and trend function to be used later
 
 ### Stage 2 (Basic Frontend)
@@ -37,7 +43,6 @@
 
 ### Stage 3 (Extended Backend)
 - [ ] Implement possible user image format download of their graphs.
-- [ ] Add user authentication (login, registration, and data tracking).
 - [ ] Create an admin panel for user and data management.
 - [ ] Write self tests for API to warn of any impending errors that may happen.
 
