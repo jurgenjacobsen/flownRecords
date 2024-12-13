@@ -23,17 +23,17 @@
 
 ### Stage 1 (Basic Backend)
 - [ ] Develop API routes to handle backend logic.
-- [ ] Add user authentication (login, registration, and data tracking).
+- [x] Add user authentication (login, registration, and data tracking).
     - [x] User Registration
-    - [ ] User Login
-    - [ ] User Authentication Middleware
-    - [ ] User Previleges and Permissions
-    - [ ] Platform database register data for global analysis
+    - [x] User Login
+    - [x] User Authentication Middleware
+    - [x] User Previleges and Permissions
 - [x] Imprement data parsing to convert supported format into JSON
     - [x] XML FlightLogger LogBook Support
     - [x] XLXS FlownRecords Template Support
     - [x] JSON FlownRecords Template Support
 - [ ] Create basic analysis and trend function to be used later
+- [ ] Platform database register data for global analysis
 
 ### Stage 2 (Basic Frontend)
 - [ ] Implement file upload for XML, JSON, and Excel formats.
