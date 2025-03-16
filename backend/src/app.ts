@@ -19,7 +19,7 @@ dotenv.config();
 
 const Users = new Database<User>({
   uri: process.env.MONGO_URI as string,
-  collection: 'test',
+  collection: 'test', // Change this to 'users' for production
 });
 
 app.use(cors());

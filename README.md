@@ -16,8 +16,10 @@
 
 - **Frontend**: Vue.js, TailwindCSS, TypeScript
 - **Backend**: Node.js with a custom API
-- **Database**: MongoDB (optional for storing user data)
+- **Database**: MongoDB
 - **File Parsing**: CSV, JSON, and Excel parsers to convert user data into a usable format.
+
+![Chart](/shared/CHART.png)
 
 ## Roadmap
 
@@ -32,26 +34,34 @@
     - [x] XML FlightLogger LogBook Support
     - [x] XLXS FlownRecords Template Support
     - [x] JSON FlownRecords Template Support
-- [ ] Create basic analysis and trend function to be used later
-- [ ] Platform database register data for global analysis
 
 ### Stage 2 (Basic Frontend)
-- [ ] Implement file upload for XML, JSON, and Excel formats.
+- [ ] Implement file upload section for XML, JSON, and Excel formats.
 - [ ] Build the user interface for data visualization and trend analysis.
-- [ ] Integrate yearly summary generation and display using graphs.
-- [ ] Create user profile display (yet without user login just guest profile).
+    - [ ] Display user flight statistics and trends.
+    - [ ] Generate graphs and charts for data visualization.
+    - [ ] Display stats such as most flown aircraft, aerodrome, average week flight hours etc.
+    - [ ] Display based on their data trends/forecasts such on which date they will hit their 100th hour of flight, other milestones, achivements.
+- [ ] Create user profile display (Similar to Volt.fm).
 
 ### Stage 3 (Extended Backend)
 - [ ] Implement possible user image format download of their graphs.
 - [ ] Create an admin panel for user and data management.
 - [ ] Write self tests for API to warn of any impending errors that may happen.
+- [ ] Create basic analysis and trend function to be used later
+- [ ] Platform database register data for global analysis
 
 ### Stage 4 (Extended Frontend)
 - [ ] Create an admin panel for user and data management.
 - [ ] Add user graphs downloads
+- [ ] User
+- [ ] Bughunt and fix any issues that may arise.
 
 ### Stage 5 (Final)
 - [ ] Deploy to a hosting platform.
+
+### Extras
+- [ ] Add support for additional file formats.
 
 ## Contribution
 
