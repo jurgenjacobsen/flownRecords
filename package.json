@@ -1,0 +1,24 @@
+{
+  "name": "flownrecords",
+  "version": "1.0.0",
+  "description": "A web application that allows users to import flight data from FlightLogger, visualize statistics, analyze trends, and compare performance through leaderboards.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jurgenjacobsen/flownRecords.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jurgenjacobsen/flownRecords/issues"
+  },
+  "homepage": "https://github.com/jurgenjacobsen/flownRecords#readme"
+}
