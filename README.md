@@ -56,3 +56,8 @@ Contributions are welcome! If you have suggestions or improvements, feel free to
 ## License
 
 This project is licensed under the MIT License.
+
+---
+
+### Useful Resources & Links
+https://github.com/vuejs/awesome-vue
