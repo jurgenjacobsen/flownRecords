@@ -27,8 +27,6 @@ ChartJS.register(
 	LineElement,
 );
 
-
-
 const UserData = {
 	name: "John Doe",
 	role: "Flight Student",
@@ -221,6 +219,13 @@ export default class UserView extends Vue {
 			this.AviWx = data;
 		} catch (err) {
 			console.error("Error fetching flights:", err);
+
+			this.AviWx = {
+				rawMetar: "Not found",
+				rawTaf: "Not found",
+				brokenTaf: ["Not found"],
+				brokenDown: {},
+			};
 		}
 	}
 
@@ -247,9 +252,9 @@ export default class UserView extends Vue {
 </script>
 
 <style scoped>
-* {
-	/* outline: 1px solid red; */
-}
+/* {
+	outline: 1px solid red; 
+}*/
 </style>
 
 <template>
@@ -433,12 +438,14 @@ export default class UserView extends Vue {
 				>
 					Local Weather
 				</h1>
-				<code class="mt-2 text-sm block">
-					<span class="ring-1 px-2">METAR</span> {{ AviWx.rawMetar }}
-				</code>
-				<code class="mt-2 text-sm block">
-					<span class="ring-1 px-2">TAF</span> {{ AviWx.rawTaf?.replace(/TAF/g, '') }}
-				</code>
+				<div class="mt-2 space-y-1">
+					<code class="text-sm block">
+						<span class="ring-1 px-2">METAR</span> {{ AviWx.rawMetar }}
+					</code>
+					<code class="text-sm block">
+						<span class="ring-1 px-2">TAF</span> {{ AviWx.rawTaf?.replace(/TAF/g, '') }}
+					</code>
+				</div>
 			</div>
 
 			<div class="lg:col-span-2 p-4 rounded-lg ring-2 ring-white/50">
