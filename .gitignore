@@ -60,4 +60,4 @@ lerna-debug.log*
 .temp
 .tmp
 
-apps/web/main.css
+apps/web/src/assets/main.css
