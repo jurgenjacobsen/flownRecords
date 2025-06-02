@@ -5,7 +5,7 @@
         {{ uppertext }}
       </div>
       <h1 class="text-8xl font-bold mt-2">
-        Flown Records
+        {{ title}}
       </h1>
       <div>
         <h3 class="font-semibold text-white/50 mt-2">

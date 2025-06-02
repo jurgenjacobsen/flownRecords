@@ -11,6 +11,7 @@
                 <div class="ml-4 lg:ml-16 space-x-6 lg:inline-block">
                     <router-link to="/getstarted" class="decoration-accent decoration-2 hover:underline">Get Started</router-link>
                     <router-link to="/organizations" class="decoration-accent decoration-2 hover:underline">Organizations</router-link>
+                    <router-link to="/tools" class="decoration-accent decoration-2 hover:underline">Tools</router-link>
                     <router-link to="/about" class="decoration-accent decoration-2 hover:underline">About</router-link>
                 </div>
             </div>

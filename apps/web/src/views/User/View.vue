@@ -247,6 +247,21 @@ export default class UserView extends Vue {
 		MainChartIndex.value =
 			(MainChartIndex.value - 1 + charts.length) % charts.length;
 	};
+
+	shareProfile() {
+		if (navigator.share) {
+			navigator.share({
+			title: `Check out ${this.User.name}'s profile!`,
+			url: window.location.href
+			}).then(() => {
+			console.log('Share successful');
+			}).catch(err => {
+			console.warn('Share failed', err);
+			});
+		} else {
+			alert('Sharing is not supported by your browser.');
+		}
+    }
 }
 
 </script>
@@ -262,7 +277,7 @@ export default class UserView extends Vue {
 		<div class="grid grid-cols-4 mt-10 mx-4 lg:mx-0">
 			<img class="h-48 w-48 rounded-full inline-flex" :src="User.icon" alt="" />
 			<div class="col-span-3">
-				<h1 class="text-8xl font-bold">John Doe</h1>
+				<h1 class="text-8xl font-bold">{{ User.name }}</h1>
 				<div class="grid grid-cols-2 gap-x-4">
 					<div>
 						<div class="font-semibold text-lg">
@@ -287,20 +302,6 @@ export default class UserView extends Vue {
 								class="ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block"
 							>
 								Public
-							</span>
-							<span class="ml-4">
-								Last flight
-								<span class="font-semibold">
-									{{
-										User.flights
-											.sort((a: any, b: any) => b.date - a.date)[0]
-											.date.toLocaleDateString("en-GB", {
-												month: "numeric",
-												day: "numeric",
-												year: "numeric",
-											})
-									}}
-								</span>
 							</span>
 						</div>
 					</div>
@@ -329,6 +330,36 @@ export default class UserView extends Vue {
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="mt-6 mx-4 lg:mx-0 inline-flex space-x-4">
+			<button 
+			class="bg-secondary px-6 py-1 rounded-md transition-all duration-150 hover:cursor-pointer hover:opacity-75 ring-1 ring-white/25" 
+			@click="$router.push('/user/edit')">
+				Edit profile
+			</button>
+
+			<button 
+			class="bg-secondary px-6 py-1 rounded-md transition-all duration-150 hover:cursor-pointer hover:opacity-75 ring-1 ring-white/25" 
+			@click="$router.push('/logbook')">
+				Logbook
+			</button>
+
+			<button 
+			class="bg-secondary px-6 py-1 rounded-md transition-all duration-150 hover:cursor-pointer hover:opacity-75 ring-1 ring-white/25" 
+			@click="shareProfile">
+				Share
+			</button>
+		</div>
+
+		<div class="mt-6">
+			<iframe
+				class="w-full h-96 rounded-lg border-2 border-white/50"
+				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2244.1234567890123!2d-8.61111111111111!3d41.23222222222222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x1234567890abcdef!2sPorto%20Airport%20(LPPR)!5e0!3m2!1sen!2spt-PT!4v1616161616161"
+				allowfullscreen="false"
+				loading="lazy"
+			></iframe>
+
 		</div>
 
 		<div class="mt-6 mx-4 lg:mx-0 grid lg:grid-cols-3 gap-6 mb-6">

@@ -30,7 +30,7 @@ const Organizations = ref([
 		Splash,
 	},
 })
-export default class Login extends Vue {
+export default class OrganizationsPage extends Vue {
 	Organizations = Organizations as any;
 }
 </script>
@@ -40,9 +40,6 @@ export default class Login extends Vue {
 
 	<div class="w-full max-w-5xl mx-auto mt-14">
 		<div class="text-center">
-			<h1 class="text-4xl font-bold text-white/75 mb-2 hidden">
-				Organizations
-			</h1>
 			<p class="text-lg text-gray-400 mb-10">
 				We are proud to be partnered with the following organizations.
 			</p>
