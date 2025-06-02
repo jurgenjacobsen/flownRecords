@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AviwxController } from './aviwx/aviwx.controller';
-import { HttpModule } from '@nestjs/axios';
+
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [HttpModule],
-  controllers: [AppController, AviwxController],
-  providers: [AppService],
+  imports: [ AuthModule, UserModule ],
 })
+
 export class AppModule {}

@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // User identification
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  username String @unique
+
+  // User authentication
+  passwordHash       String
+  resetPasswordToken String?   @unique
+  emailVerified      Boolean   @default(false)
+  lastLogin          DateTime?
+
+  // User metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  firstName         String?
+  lastName          String?
+  profilePictureUrl String?
+  bio               String?
+
+  // User orgnization
+  organizationId String?
+  role           UserOrganizationRole @default(GUEST) // Possible values: GUEST / STUDENT / INSTRUCTOR / SUPERVISOR / ADMIN
+  joinedAt       DateTime?
+
+  // User preferences
+  theme                Theme? @default(DARK)
+  language             String? @default("en")
+  publicProfile        Boolean @default(true)
+  newsletterSubscribed Boolean @default(false)
+
+  // Extras
+  disabled Boolean @default(false)
+  admin    Boolean @default(false)
+
+  // Logbook
+  logbookEntries LogbookEntry[] @relation("UserLogbook")
+}
+
+model LogbookEntry {
+  // Logbook entry identification
+  id      Int   @id @default(autoincrement())
+  pilotId Int
+  crewId  Int[]
+
+  // Logbook entry metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Flight data
+  date  DateTime
+  depAd String
+  arrAd String
+
+  offBlock DateTime
+  onBlock  DateTime
+
+  aircraftType         String
+  aircraftRegistration String
+  picName              String
+
+  total             Int
+  dayTime           Int
+  nightTime         Int
+  sepVfr            Int
+  sepIfr            Int
+  meVfr             Int
+  meIfr             Int
+  picTime           Int
+  copilotTime       Int
+  multiPilotTime    Int
+  instructorTime    Int
+  dualTime          Int
+  simTime           Int
+  simInstructorTime Int
+
+  landDay   Int
+  landNight Int
+
+  rmks String?
+
+  flightTrack Json[]
+
+  userId Int
+  user   User @relation("UserLogbook", fields: [userId], references: [id])
+}
+
+model Organization {
+  // Organization identification
+  id     Int              @id @default(autoincrement())
+  name   String           @unique
+  handle String           @unique
+  type   OrganizationType @default(SCHOOL) // Possible values: SCHOOL / COMPANY / COMMUNITY / CLUB / OTHER
+
+  // Organization metadata
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  description  String?
+  logoUrl      String?
+  websiteUrl   String?
+  contactEmail String?
+  address      String?
+  phoneNumber  String?
+
+  // Organization members
+  membersId Int[]
+  adminsId  Int[]
+
+  // Organization settings
+  public Boolean @default(true)
+
+  // Extras
+  archived Boolean @default(false)
+}
+
+enum OrganizationType {
+  SCHOOL
+  COMPANY
+  COMMUNITY
+  CLUB
+  OTHER
+}
+
+enum UserOrganizationRole {
+  GUEST
+  STUDENT
+  PILOT
+  INSTRUCTOR
+  SUPERVISOR
+  ADMIN
+}
+
+enum Theme {
+  LIGHT
+  DARK
+}
