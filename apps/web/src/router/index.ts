@@ -13,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/getstarted',
-    alias: '/register',
+    alias: '/signup',
     name: 'getstarted',
     component: () => import('@/views/GetStarted.vue')
   },
@@ -35,12 +35,13 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/user/:id',
+    alias: ['/u/:id'],
     name: 'user-profile',
     component: () => import('@/views/User/View.vue')
   },
   {
     path: '/user/logbook',
-    alias: ['/me/logbook'],
+    alias: ['/me/logbook', '/logbook'],
     name: 'user-logbook',
     component: () => import('@/views/User/Logbook.vue')
   },
@@ -60,7 +61,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tools',
     name: 'tools',
     component: () => import('@/views/Tools/Main.vue')
-  }
+  },
+  {
+    path: '/tools/planner',
+    name: 'ofp',
+    component: () => import('@/views/Tools/Planner.vue')
+  },
 ]
 
 const router = createRouter({

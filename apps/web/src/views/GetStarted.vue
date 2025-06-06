@@ -1,6 +1,8 @@
 <script lang="ts">
+import Button from "@/components/Button.vue";
 import DropdownInput from "@/components/DropdownInput.vue";
 import Splash from "@/components/Splash.vue";
+
 
 import { ref, computed } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -33,6 +35,7 @@ const allRoles = ref([
 	components: {
 		Splash,
 		DropdownInput,
+		Button
 	},
 })
 export default class GetStarted extends Vue {
@@ -117,12 +120,7 @@ export default class GetStarted extends Vue {
 			<div></div>
 
 			<div class="flex justify-end">
-				<button
-					type="submit"
-					class="cursor-pointer bg-white/10 text-white font-semibold px-[20%] py-2 rounded-md hover:bg-white/20 transition"
-				>
-					Register
-				</button>
+				<Button txt="Submit" type="submit" class="px-[20%]"/>
 			</div>
 		</form>
 

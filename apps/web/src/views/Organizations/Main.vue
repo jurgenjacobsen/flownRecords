@@ -40,7 +40,7 @@ export default class OrganizationsPage extends Vue {
 
 	<div class="w-full max-w-5xl mx-auto mt-14">
 		<div class="text-center">
-			<p class="text-lg text-gray-400 mb-10">
+			<p class="text-white/75 mb-10">
 				We are proud to be partnered with the following organizations.
 			</p>
 		</div>

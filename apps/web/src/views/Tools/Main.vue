@@ -31,7 +31,7 @@ export default class ToolsMain extends Vue {
             <h1 class="text-4xl font-bold text-white/75 mb-2 hidden">
                 Tools
             </h1>
-            <p class="text-lg text-gray-400 mb-10">
+            <p class="text-lg text-white/75 mb-10">
                 Explore the tools available to enhance your experience.
             </p>
         </div>
