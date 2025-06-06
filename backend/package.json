@@ -3,6 +3,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:dev:deploy": "prisma migrate deploy",
+    "db:dev:rm": "docker compose rm -s -f -v",
+    "db:dev:up": "docker compose up -d",
+    "db:dev:restart": "npm run db:dev:rm && npm run db:dev:up && sleep 5 && prisma migrate dev",
     "build": "nest build",
     "format": "prettier --config \"../config/.prettierrc\" --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -22,6 +26,9 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.8.2",
+    "argon2": "^0.43.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
