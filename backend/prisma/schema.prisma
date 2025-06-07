@@ -149,9 +149,17 @@ enum UserOrganizationRole {
   GUEST
   STUDENT
   PILOT
-  INSTRUCTOR
-  SUPERVISOR
-  ADMIN
+  CFI // Chief Flight Instructor
+  CTKI // Chief Theoretical Knowledge Instructor
+  SM // Safety Manager
+  OPS // Operations
+  FI // Flight Instructor
+  TKI // Theoretical Knowledge Instructor
+  MAIN // Maintenance
+  OFFICE // Office Staff
+  SUPERVISOR // Supervisor
+  ADMIN // Administrator
+  OTHER 
 }
 
 enum Theme {
