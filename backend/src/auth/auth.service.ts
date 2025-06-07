@@ -31,11 +31,27 @@ export class AuthService {
       throw new ForbiddenException('Credentials incorrect');
     }
 
+    try {
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          lastLogin: new Date(),
+        },
+      })
+    } catch(e) {
+
+    }
+
     return this.signToken(user.id, user.email);
   }
 
   async signup(dto: AuthDto) {
     const hash = await argon.hash(dto.password);
+
+    const inputName = dto.name || dto.username;
+    const nameParts = inputName.split(' ');
+    const firstName = nameParts[0] || undefined;
+    const lastName = nameParts[nameParts.length - 1] || undefined;
 
     try {
       const user = await this.prisma.user.create({
@@ -43,6 +59,10 @@ export class AuthService {
           email: dto.email,
           username: dto.username,
           passwordHash: hash,
+          organizationId: dto.organizationId,
+          organizationRole: dto.organizationRole,
+          firstName,
+          lastName,
         },
       });
 

@@ -22,7 +22,6 @@ model User {
 
   // User authentication
   passwordHash       String
-  resetPasswordToken String?   @unique
   emailVerified      Boolean   @default(false)
   lastLogin          DateTime?
 
@@ -39,14 +38,14 @@ model User {
 
   // User orgnization
   organizationId String?
-  role           UserOrganizationRole @default(GUEST) // Possible values: GUEST / STUDENT / INSTRUCTOR / SUPERVISOR / ADMIN
-  joinedAt       DateTime?
+  organizationRole           UserOrganizationRole @default(GUEST) // Possible values: GUEST / STUDENT / INSTRUCTOR / SUPERVISOR / ADMIN
+  organizationJoinedAt       DateTime?
+  orgMemberVerifiedAt     Boolean @default(false)
 
   // User preferences
   theme                Theme? @default(DARK)
   language             String? @default("en")
   publicProfile        Boolean @default(true)
-  newsletterSubscribed Boolean @default(false)
 
   // Extras
   disabled Boolean @default(false)

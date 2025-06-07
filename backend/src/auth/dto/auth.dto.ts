@@ -1,6 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { UserOrganizationRole } from '@prisma/client';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class AuthDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -14,4 +19,12 @@ export class AuthDto {
   @IsNotEmpty()
   @MinLength(8)
   password: string;
+
+  @IsOptional()
+  @IsString()
+  organizationId?: string;
+
+  @IsOptional()
+  @IsEnum(UserOrganizationRole)
+  organizationRole?: UserOrganizationRole;
 }
