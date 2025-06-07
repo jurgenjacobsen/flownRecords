@@ -43,7 +43,7 @@
 	<div class="flex flex-col items-center mt-10 mb-8">
 		<router-link to="/getstarted">
 			<button
-				class="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 hover:to-accent hover:from-accent hover:ring-accent text-white font-semibold py-2 px-4 rounded-lg ring-2 ring-white/25 hover:bg-gradient-to-bl transition duration-700"
+				class="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 hover:opacity-75 text-white font-semibold py-2 px-4 rounded-lg ring-2 ring-white/25 transition duration-150"
 			>
 				Get Started
 			</button>

@@ -1,10 +1,12 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import Splash from "@/components/Splash.vue";
+import Button from "@/components/Button.vue";
 
 @Options({
 	components: {
-		Splash,
+		Splash, 
+		Button
 	},
 })
 export default class Login extends Vue {}
@@ -42,13 +44,16 @@ export default class Login extends Vue {}
 				/>
 			</div>
 
-			<div class="flex justify-end">
-				<button
-					type="submit"
-					class="cursor-pointer bg-white/10 text-white font-semibold px-[20%] py-2 rounded-md hover:bg-white/20 transition"
-				>
-					Login
-				</button>
+			<div>
+				<span>
+					Forgot your password?
+					<a href="/resetpassword" class="text-accent font-semibold hover:underline hover:opacity-75 transition-all duration-150">Reset it</a>
+				</span>
+			</div>
+
+			<div class="flex justify-between">
+				<Button txt="Create new account" link="/getstarted" class="px-[10%]"/>
+				<Button txt="Login" type="submit" class="px-[20%]"/>
 			</div>
 		</form>
 	</div>

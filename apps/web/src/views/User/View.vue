@@ -15,6 +15,7 @@ import {
 	PointElement,
 	LineElement,
 } from "chart.js";
+import Button from "@/components/Button.vue";
 
 ChartJS.register(
 	Title,
@@ -29,7 +30,9 @@ ChartJS.register(
 
 const UserData = {
 	name: "John Doe",
+	username: "johndoe",
 	role: "Flight Student",
+	homeAirport: "LPPR",
 	organization: {
 		name: "Nortávia",
 		id: "nortavia",
@@ -175,6 +178,7 @@ const ChartComponents = { bar: Bar, line: Line, doughnut: Doughnut, pie: Pie };
 		Line: markRaw(Line),
 		Doughnut: markRaw(Doughnut),
 		Pie: markRaw(Pie),
+		Button,
 	},
 })
 
@@ -188,7 +192,7 @@ export default class UserView extends Vue {
 
 	async mounted() {
 		try {
-			const res = await axios.get("http://localhost:3000/aviwx/lppr");
+			const res = await axios.get("http://localhost:3000/aviwx/" + this.User.homeAirport);
 			if (!res) throw new Error("Failed to fetch flights");
 			const data = {
 				rawMetar: res.data?.[0]?.rawOb,
@@ -267,16 +271,14 @@ export default class UserView extends Vue {
 </script>
 
 <style scoped>
-/* {
-	outline: 1px solid red; 
-}*/
+
 </style>
 
 <template>
 	<div class="w-full max-w-5xl mx-auto mt-14">
 		<div class="grid grid-cols-4 mt-10 mx-4 lg:mx-0">
 			<img class="h-48 w-48 rounded-full inline-flex" :src="User.icon" alt="" />
-			<div class="col-span-3">
+			<div class="col-span-2">
 				<h1 class="text-8xl font-bold">{{ User.name }}</h1>
 				<div class="grid grid-cols-2 gap-x-4">
 					<div>
@@ -297,7 +299,12 @@ export default class UserView extends Vue {
 							</span>
 						</div>
 
-						<div class="text-sm opacity-50 mt-2">
+						<div class="text-sm opacity-50 mt-2 space-x-2">
+							<span
+								class="ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block"
+							>
+								@{{ User.username }}
+							</span>
 							<span
 								class="ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block"
 							>
@@ -306,7 +313,7 @@ export default class UserView extends Vue {
 						</div>
 					</div>
 
-					<div class="flex justify-end">
+					<!--<div class="flex justify-end">
 						<div class="bg-secondary rounded-lg px-4 py-2 w-3/5">
 							<div class="w-full text-sm flex justify-between">
 								<span class="text-white/50"> Current flying </span>
@@ -327,39 +334,24 @@ export default class UserView extends Vue {
 								<span class="text-white font-semibold"> LPPR </span>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
+			</div>
+			<div class="flex flex-col justify-center space-y-3">
+				<Button txt="Edit Profile" link="/user/edit"/>
+
+				<Button txt="Logbook" link="/user/logbook"/>
+
+				<Button txt="Share" @click="shareProfile"/>
+
 			</div>
 		</div>
 
-		<div class="mt-6 mx-4 lg:mx-0 inline-flex space-x-4">
-			<button 
-			class="bg-secondary px-6 py-1 rounded-md transition-all duration-150 hover:cursor-pointer hover:opacity-75 ring-1 ring-white/25" 
-			@click="$router.push('/user/edit')">
-				Edit profile
-			</button>
 
-			<button 
-			class="bg-secondary px-6 py-1 rounded-md transition-all duration-150 hover:cursor-pointer hover:opacity-75 ring-1 ring-white/25" 
-			@click="$router.push('/logbook')">
-				Logbook
-			</button>
-
-			<button 
-			class="bg-secondary px-6 py-1 rounded-md transition-all duration-150 hover:cursor-pointer hover:opacity-75 ring-1 ring-white/25" 
-			@click="shareProfile">
-				Share
-			</button>
-		</div>
-
-		<div class="mt-6">
-			<iframe
-				class="w-full h-96 rounded-lg border-2 border-white/50"
-				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2244.1234567890123!2d-8.61111111111111!3d41.23222222222222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x1234567890abcdef!2sPorto%20Airport%20(LPPR)!5e0!3m2!1sen!2spt-PT!4v1616161616161"
-				allowfullscreen="false"
-				loading="lazy"
-			></iframe>
-
+		<div class="h-96 rounded-lg mt-6 ring-2 ring-white/50 flex items-center justify-center">
+			<h1 class="text-4xl font-semibold text-white/25">
+				Map
+			</h1>
 		</div>
 
 		<div class="mt-6 mx-4 lg:mx-0 grid lg:grid-cols-3 gap-6 mb-6">
@@ -441,7 +433,7 @@ export default class UserView extends Vue {
 				</div>
 			</div>
 
-			<div class="lg:row-span-2 p-4 rounded-lg ring-2 ring-white/50">
+			<div class="p-4 rounded-lg ring-2 ring-white/50">
 				<h1
 					class="text-lg font-semibold text-white/75 border-0 border-b-2 border-white/25"
 				>
@@ -463,28 +455,34 @@ export default class UserView extends Vue {
 						<span class="justify-end">{{ mostFlownAcft() }}</span>
 					</div>
 				</div>
-
-				<h1
-					class="text-lg font-semibold text-white/75 border-0 border-b-2 border-white/25 mt-4"
-				>
-					Local Weather
-				</h1>
-				<div class="mt-2 space-y-1">
-					<code class="text-sm block">
-						<span class="ring-1 px-2">METAR</span> {{ AviWx.rawMetar }}
-					</code>
-					<code class="text-sm block">
-						<span class="ring-1 px-2">TAF</span> {{ AviWx.rawTaf?.replace(/TAF/g, '') }}
-					</code>
-				</div>
 			</div>
 
 			<div class="lg:col-span-2 p-4 rounded-lg ring-2 ring-white/50">
-				<h1
-					class="text-lg font-semibold text-white/75 border-0 border-b-2 border-white/25"
-				>
-					Activity
-				</h1>
+				<div class="w-full border-0 border-b-2 border-white/25">
+					<a href="/user/logbook" class="inline-flex hover:opacity-50 transition-all duration-150">
+						<h1
+						class="text-lg font-semibold text-white/75 "
+						>
+							Logbook
+						</h1>
+
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-6 w-6 text-white/50 ml-2"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9 5l7 7-7 7m0-14l7 7-7 7"
+							/>
+						</svg>
+
+					</a>
+				</div>
 				<div class="py-2">
 					<div class="grid grid-cols-4 pl-4 pr-5 pb-2 mr-4 text-sm text-white/50">
 						<span>Flight</span>
@@ -504,7 +502,7 @@ export default class UserView extends Vue {
 									: ''
 							"
 							:key="index"
-							:href="'/flights/' + act.id"
+							:href="'/logbook#' + act.id"
 						>
 							<span class="text-sm text-white/50">{{ act.mission }}</span>
 							<span class="text-sm text-white/50">{{ act.acft }}</span>
@@ -518,6 +516,31 @@ export default class UserView extends Vue {
 							}}</span>
 						</a>
 					</div>
+				</div>
+			</div>
+
+			<div class="p-4 rounded-lg ring-2 ring-white/50">
+				<h1
+					class="text-lg font-semibold text-white/75 border-0 border-b-2 border-white/25"
+				>
+					Local Weather
+					
+					<span class="text-sm text-white/25">
+					{{ User.homeAirport }}
+					</span>
+				</h1>
+
+				<div class="mt-2 space-y-1">
+					<span class="text-sm ring-1 px-2 text-white/50">METAR</span>
+					<code class="text-sm block mb-2">
+						{{ AviWx.rawMetar ?? 'Not found' }}
+					</code>
+
+					<span class="text-sm ring-1 px-2 text-white/50">TAF</span>
+					<code class="text-sm block">
+						{{ AviWx.rawTaf?.replace(/TAF/g, '') ?? 'Not found' }}
+					</code>
+
 				</div>
 			</div>
 		</div>
