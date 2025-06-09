@@ -32,9 +32,24 @@ export default class Login extends Vue {
 			axios.post("http://localhost:7700/auth/signin", form)
 			.then(response => {
 				if (response.status === 200) {
-					this.$router.push("/me");
+					const token = response.data.accessToken;
+					if(!token) {
+						alert("Login failed: No token received.");
+						return;
+					}
+
+					localStorage.setItem('accessToken', token);
+
+					return this.$router.push("/me");
 				} else {
 					alert("Login failed: " + response.data.message);
+				}
+			}).catch(e => {
+				console.error("Login error:", e);
+				if (e.response && e.response.data) {
+					alert("Login failed: " + e.response.data.message);
+				} else {
+					alert("An error occurred during login. Please try again later.");
 				}
 			})
 		} catch(e) {

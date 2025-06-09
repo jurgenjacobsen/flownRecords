@@ -90,8 +90,15 @@ export default class GetStarted extends Vue {
 			axios.post("http://localhost:7700/auth/signup", form)
 			.then(response => {
 				if (response.status === 200) {
-					alert("Registration successful! Please check your email for further instructions.");
-					this.$router.push("/login");
+					const token = response.data.accessToken;
+					if(!token) {
+						alert("Login failed: No token received.");
+						return;
+					}
+
+					localStorage.setItem('accessToken', token);
+
+					return this.$router.push("/me");
 				} else {
 					alert("Registration failed. Please try again.");
 				}
@@ -218,12 +225,6 @@ export default class GetStarted extends Vue {
 					</span>
 				</div>
 				<div class="flex items-center gap-2">
-					<!--<input
-						type="checkbox"
-						id="terms"
-						v-model="termsAccepted"
-							class="w-4 h-4 accent-secondary/75 focus:ring-0 rounded-md outline-none ring-0"
-					/>-->
 					<div class="flex items-center cursor-pointer relative">
 						<input 
 						type="checkbox" 

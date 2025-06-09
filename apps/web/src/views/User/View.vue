@@ -171,6 +171,7 @@ const AviWx = ref({}) as any;
 const User = ref(UserData) as any;
 const Charts = ref(charts) as any;
 const ChartComponents = { bar: Bar, line: Line, doughnut: Doughnut, pie: Pie };
+const user = ref() as any;
 
 @Options({
 	components: {
@@ -183,15 +184,71 @@ const ChartComponents = { bar: Bar, line: Line, doughnut: Doughnut, pie: Pie };
 })
 
 export default class UserView extends Vue {
+	user = user;
 	User = User as any;
 	Bar = Bar;
 	MainChartIndex = MainChartIndex;
 	Charts = Charts;
 	ChartComponents = ChartComponents;
 	AviWx = AviWx;
+	ORGANIZATIONS = {
+		nortavia: "Nortávia",
+		sevenair: "SevenAir",
+	};
+
+	ROLES = {
+		GUEST: "Guest",
+		STUDENT: "Student Pilot",
+		PILOT: "Pilot",
+		CFI: "Chief Flight Instructor",
+		CTKI: "Chief Theoretical Knowledge Instructor",
+		SM: "Safety Manager",
+		OPS: "Operations",
+		FI: "Flight Instructor",
+		TKI: "Theoretical Knowledge Instructor",
+		MAIN: "Maintenance",
+		OFFICE: "Office",
+		SUPERVISOR: "Supervisor",
+		ADMIN: "Administrator",
+		MANAGER: "Manager",
+		OTHER: "Other",
+	} as any
+
+	async created() {
+		const token = localStorage.getItem("accessToken");
+		if (!token) {
+			this.$router.push("/login");
+			return;
+		}
+
+		try {
+			const res = await axios.get("http://localhost:7700/users/me", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}).catch((err) => {
+				if (err.response?.status === 401) {
+					
+				} else {
+					console.error("Error fetching user data:", err);
+				}
+			});
+			
+			if (!res) throw new Error("Failed to fetch user data");
+
+			this.user = res.data;
+		} catch (e) {
+			console.error("Error fetching user data:", e);
+			this.$router.push("/login");
+			return;
+		}
+	}
 
 	async mounted() {
+		
+
 		try {
+			/*
 			const res = await axios.get("http://localhost:3000/aviwx/" + this.User.homeAirport);
 			if (!res) throw new Error("Failed to fetch flights");
 			const data = {
@@ -220,7 +277,7 @@ export default class UserView extends Vue {
 
 			data.brokenTaf = blocks;
 
-			this.AviWx = data;
+			this.AviWx = data;*/
 		} catch (err) {
 			console.error("Error fetching flights:", err);
 
@@ -254,13 +311,11 @@ export default class UserView extends Vue {
 
 	shareProfile() {
 		if (navigator.share) {
-			navigator.share({
-			title: `Check out ${this.User.name}'s profile!`,
-			url: window.location.href
-			}).then(() => {
-			console.log('Share successful');
+				navigator.share({
+				title: `Check out ${this.user?.firtName ?? this.user?.username}'s profile!`,
+				url: `${window.location.origin}/user/${this.user?.username}`,
 			}).catch(err => {
-			console.warn('Share failed', err);
+				console.warn('Share failed', err);
 			});
 		} else {
 			alert('Sharing is not supported by your browser.');
@@ -279,22 +334,23 @@ export default class UserView extends Vue {
 		<div class="grid grid-cols-4 mt-10 mx-4 lg:mx-0">
 			<img class="h-48 w-48 rounded-full inline-flex" :src="User.icon" alt="" />
 			<div class="col-span-2">
-				<h1 class="text-8xl font-bold">{{ User.name }}</h1>
-				<div class="grid grid-cols-2 gap-x-4">
+				<h1 class="text-8xl font-bold capitalize">{{ user?.firstName }}</h1>
+				<div class="grid grid-cols-2 gap-x-4 mt-4">
 					<div>
 						<div class="font-semibold text-lg">
-							<span class="text-white/75">
-								{{ User.role }}
+							<span class="text-white/75" v-if="user?.organizationRole">
+								{{ ROLES[user?.organizationRole] || user?.organizationRole }}
 							</span>
-							<span class="text-white/25 px-2" v-if="User.organization">
+							<span class="text-white/25 px-2" v-if="user?.organizationId && user?.organizationRole">
 								@
 							</span>
 							<span
 								class="text-white/75 transtion-all duration-150 hover:text-white/50"
-								v-if="User.organization"
+								v-if="user?.organizationId"
 							>
-								<a :href="'/org/' + User.organization.id">{{
-									User.organization.name
+								<a :href="'/org/' + user?.organizationId">{{
+									// @ts-ignore
+									ORGANIZATIONS[user?.organizationId] || user?.organizationId
 								}}</a>
 							</span>
 						</div>
@@ -302,39 +358,17 @@ export default class UserView extends Vue {
 						<div class="text-sm opacity-50 mt-2 space-x-2">
 							<span
 								class="ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block"
+								v-if="user?.username"
 							>
-								@{{ User.username }}
+								@{{ user?.username }}
 							</span>
 							<span
 								class="ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block"
 							>
-								Public
+								{{ user?.publicProfile  ? 'Public' : 'Private' }}
 							</span>
 						</div>
 					</div>
-
-					<!--<div class="flex justify-end">
-						<div class="bg-secondary rounded-lg px-4 py-2 w-3/5">
-							<div class="w-full text-sm flex justify-between">
-								<span class="text-white/50"> Current flying </span>
-								<span class="ml-2 font-semibold text-white"> RTV1D </span>
-							</div>
-							<div class="w-full flex justify-between">
-								<span class="text-white font-semibold"> LPVL </span>
-								<span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="currentColor"
-										class="w-4 h-6 opacity-25"
-										viewBox="0 0 24 24"
-									>
-										<path d="M2.5 19.5l19-7.5v-2l-19-7.5v4.5l12 3-12 3v4.5z" />
-									</svg>
-								</span>
-								<span class="text-white font-semibold"> LPPR </span>
-							</div>
-						</div>
-					</div> -->
 				</div>
 			</div>
 			<div class="flex flex-col justify-center space-y-3">
