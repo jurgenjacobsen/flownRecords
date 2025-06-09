@@ -3,7 +3,6 @@ import Button from "@/components/Button.vue";
 import DropdownInput from "@/components/DropdownInput.vue";
 import Splash from "@/components/Splash.vue";
 
-
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import axios from "axios";
@@ -66,7 +65,7 @@ export default class GetStarted extends Vue {
 	pwConfirm = pwConfirm;
 	termsAccepted = termsAccepted;
 
-	send() {
+	signUp() {
 		const form = {
 			name: this.name,
 			username: this.username,
@@ -117,7 +116,7 @@ export default class GetStarted extends Vue {
 			Fill out your information
 		</h2>
 
-		<form class="grid grid-cols-2 gap-6 max-w-5xl" @submit.prevent="send" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
+		<form class="grid grid-cols-2 gap-6 max-w-5xl" @submit.prevent="signUp" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
 			<div class="flex flex-col">
 				<label class="text-sm text-white/75 mb-1" >your name</label>
 				<input
@@ -219,12 +218,25 @@ export default class GetStarted extends Vue {
 					</span>
 				</div>
 				<div class="flex items-center gap-2">
-					<input
+					<!--<input
 						type="checkbox"
 						id="terms"
 						v-model="termsAccepted"
-							class="w-4 h-4 accent-primary/75 focus:ring-2 focus:ring-primary/50"
-					/>
+							class="w-4 h-4 accent-secondary/75 focus:ring-0 rounded-md outline-none ring-0"
+					/>-->
+					<div class="flex items-center cursor-pointer relative">
+						<input 
+						type="checkbox" 
+						id="terms"
+						v-model="termsAccepted"
+						class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-second-accent/25 checked:border-second-accent"/>
+						<span class="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+								<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+							</svg>
+						</span>
+					</div>
+
 					<label for="terms" class="text-sm text-white/75">
 						I agree to the <a href="#" class="text-second-accent">terms and conditions</a>
 					</label>
@@ -236,7 +248,7 @@ export default class GetStarted extends Vue {
 
 			<div class="flex justify-end items-center ">
 				
-				<Button txt="Submit" type="submit" class="px-[20%]"/>
+				<Button txt="Sign Up" type="submit" class="px-[20%]"/>
 			</div>
 		</form>
 
