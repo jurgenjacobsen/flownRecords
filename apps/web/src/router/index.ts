@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     alias: '/home',
     name: 'home',
-    component: HomeView
+    component: HomeView,
   },
   {
     path: '/getstarted',
@@ -28,22 +28,30 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/About.vue')
   },
   {
-    path: '/user',
-    alias: ['/me'],
-    name: 'user',
+    path: '/me',
+    name: 'me',
     component: () => import('@/views/User/View.vue'),
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/user/:id',
     alias: ['/u/:id'],
     name: 'user-profile',
-    component: () => import('@/views/User/View.vue')
+    component: () => import('@/views/User/View.vue'),
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/user/logbook',
     alias: ['/me/logbook', '/logbook'],
     name: 'user-logbook',
-    component: () => import('@/views/User/Logbook.vue')
+    component: () => import('@/views/User/Logbook.vue'),
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/organizations',
@@ -73,5 +81,16 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+// Global navigation guard to handle aliases
+router.beforeEach((to, from, next) => {
+  // Check if the route has an alias
+  const token = localStorage.getItem('accessToken');
+  if (to.meta.requiresAuth && !token) {
+    next({ name: 'login' });
+  } else {
+    next();
+  }
+});
 
 export default router

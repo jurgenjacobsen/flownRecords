@@ -1,28 +1,16 @@
 <template>
-    <nav class="bg-secondary m-4 py-2 px-12 rounded-lg ring-1 ring-white/25 ">
-        <div class="grid grid-cols-3">
-            <div>
-                <router-link to="/">
-                    <span class="font-semibold">
-                        Flown Records
-                    </span>
-                </router-link>
+  <nav class="bg-secondary text-white px-4 py-2 flex justify-between items-center rounded-lg ring-1 ring-white/25 m-4">
+    <div class="flex items-center space-x-6">
+      <span class="font-semibold">Flown Records</span>
 
-                <div class="ml-4 lg:ml-16 space-x-6 lg:inline-block">
-                    <router-link to="/getstarted" class="decoration-accent decoration-2 hover:underline">Get Started</router-link>
-                    <router-link to="/organizations" class="decoration-accent decoration-2 hover:underline">Organizations</router-link>
-                    <router-link to="/tools" class="decoration-accent decoration-2 hover:underline">Tools</router-link>
-                    <router-link to="/about" class="decoration-accent decoration-2 hover:underline">About</router-link>
-                </div>
-            </div>
-            
-            <div class="text-center space-x-4">
-                
-            </div>
+      <a href="/getstarted" class="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Get Started</a>
+      <a href="/organizations" class="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Organizations</a>
+      <a href="/tools" class="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Tools</a>
+      <a href="/about" class="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">About</a>
+    </div>
 
-            <div class="text-right">
-                <a href="/login">Login</a>
-            </div>
-        </div>
-    </nav>
+    <div>
+      <a href="/login" class="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Login</a>
+    </div>
+  </nav>
 </template>

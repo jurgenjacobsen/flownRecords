@@ -28,3 +28,13 @@ export class AuthDto {
   @IsEnum(UserOrganizationRole)
   organizationRole?: UserOrganizationRole;
 }
+
+export class LoginDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
