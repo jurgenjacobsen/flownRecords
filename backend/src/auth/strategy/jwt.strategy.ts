@@ -35,6 +35,9 @@ export class JwtStrategy extends PassportStrategy(
         where: {
           id: payload.sub,
         },
+        include: {
+          logbookEntries: true,
+        },
       });
     
     if (!user) {

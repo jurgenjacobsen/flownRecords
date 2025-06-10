@@ -14,6 +14,7 @@ import {
 	LinearScale,
 	PointElement,
 	LineElement,
+	ArcElement,
 } from "chart.js";
 import Button from "@/components/Button.vue";
 
@@ -26,152 +27,14 @@ ChartJS.register(
 	LinearScale,
 	PointElement,
 	LineElement,
+	ArcElement
 );
 
-const UserData = {
-	name: "John Doe",
-	username: "johndoe",
-	role: "Flight Student",
-	homeAirport: "LPPR",
-	organization: {
-		name: "Nortávia",
-		id: "nortavia",
-		logo: "https://placehold.co/512x512",
-	},
-	icon: "https://placehold.co/512x512",
-	stats: {
-		flights: 1,
-		hours: 1,
-	},
-	flights: [
-		{
-			id: "1",
-			mission: "NAVI02",
-			acft: "CS-DGS",
-			type: "C172",
-			date: new Date("2023-12-12"),
-		},
-		{
-			id: "2",
-			mission: "NAVI01",
-			acft: "CS-DGS",
-			type: "C172",
-			date: new Date("2023-12-12"),
-		},
-		{
-			id: "3",
-			mission: "NAVI01",
-			acft: "CS-EDS",
-			type: "C172",
-			date: new Date("2022-3-5"),
-		},
-		{
-			id: "4",
-			mission: "NAVI01",
-			acft: "CS-DGS",
-			type: "C172",
-			date: new Date("2024-12-12"),
-		},
-		{
-			id: "5",
-			mission: "NAVI01",
-			acft: "CS-EDT",
-			type: "C152",
-			date: new Date("2025-05-12"),
-		},
-		{
-			id: "6",
-			mission: "NAVI01",
-			acft: "CS-EDT",
-			type: "C152",
-			date: new Date("2025-02-18"),
-		},
-	],
-};
+const chartsDisplayIndex = ref(0) as any;
 
-const charts = [
-	{
-		id: "chart1",
-		name: "Flight Hours",
-		type: "line",
-		chartData: {
-			labels: ["January", "February", "March", "April", "May"],
-			datasets: [
-				{
-					label: "Flights",
-					backgroundColor: "#DD3434",
-					borderColor: "#DD3434",
-					data: [7, 5, 12, 4, 3],
-					tension: 0.7,
-					cubicInterpolationMode: "monotone",
-				},
-				{
-					label: "Hours",
-					backgroundColor: "#313ED8",
-					borderColor: "#313ED8",
-					data: [7, 5, 11.5, 7.15, 5],
-					tension: 0.7,
-					cubicInterpolationMode: "monotone",
-				},
-			],
-		},
-		chartOptions: {
-			responsive: true,
-			elements: {
-				pointStyle: false,
-			},
-			scales: {
-				y: {
-					display: true,
-				},
-			},
-		},
-	},
-	{
-		id: "chart2",
-		name: "Aircraft Type",
-		type: "bar",
-		chartData: {
-			labels: UserData.flights
-				.map((flight: any) => flight.type)
-				.filter(
-					(value: any, index: number, self: any) =>
-						self.indexOf(value) === index,
-				),
-			datasets: [
-				{
-					label: "Flights",
-					data: UserData.flights
-						.map((flight: any) => flight.type)
-						.filter(
-							(value: any, index: number, self: any) =>
-								self.indexOf(value) === index,
-						)
-						.map(
-							(type: any) =>
-								UserData.flights.filter((flight: any) => flight.type === type)
-									.length,
-						),
-					backgroundColor: "rgba(0, 255, 170, 0.5)",
-					borderColor: "rgba(0, 255, 170, 1)",
-					borderWidth: 1,
-					borderRadius: 5,
-					maxBarThickness: 48,
-				},
-			],
-		},
-		chartOptions: {
-			responsive: true,
-		},
-	},
-];
-
-const MainChartIndex = ref(0);
-const AviWx = ref({}) as any;
-const User = ref(UserData) as any;
-const Charts = ref(charts) as any;
 const ChartComponents = { bar: Bar, line: Line, doughnut: Doughnut, pie: Pie };
 const user = ref() as any;
+const wx = ref() as any;
 
 @Options({
 	components: {
@@ -185,18 +48,19 @@ const user = ref() as any;
 
 export default class UserView extends Vue {
 	user = user;
-	User = User as any;
+	wx = wx;
+
 	Bar = Bar;
-	MainChartIndex = MainChartIndex;
-	Charts = Charts;
+	chartsDisplayIndex = chartsDisplayIndex;
+
 	ChartComponents = ChartComponents;
-	AviWx = AviWx;
-	ORGANIZATIONS = {
+
+	ORGANIZATIONS: { [key: string]: string }  = {
 		nortavia: "Nortávia",
 		sevenair: "SevenAir",
 	};
 
-	ROLES = {
+	ROLES: { [key: string]: string } = {
 		GUEST: "Guest",
 		STUDENT: "Student Pilot",
 		PILOT: "Pilot",
@@ -214,7 +78,320 @@ export default class UserView extends Vue {
 		OTHER: "Other",
 	} as any
 
-	async created() {
+	rawCharts = [
+		{
+			id: "chart1",
+			name: "Flight Hours",
+			type: "line",
+			chartData: {
+				labels: ["January", "February", "March", "April", "May"],
+				datasets: [
+					{
+						label: "Flights",
+						backgroundColor: "#DD3434",
+						borderColor: "#DD3434",
+						data: [],
+						tension: 0.7,
+						cubicInterpolationMode: "monotone",
+					},
+					{
+						label: "Hours",
+						backgroundColor: "#313ED8",
+						borderColor: "#313ED8",
+						data: [],
+						tension: 0.7,
+						cubicInterpolationMode: "monotone",
+					},
+				],
+			},
+			chartOptions: {
+				maintainAspectRatio: false,
+				responsive: true,
+				elements: {
+					pointStyle: false,
+				},
+				scales: {
+					y: {
+						display: true,
+						ticks: {
+							/*callback: function (value: any) {
+								return value.toFixed(0) + " hrs";
+							},*/
+						},
+					},
+				},
+				plugins: {
+					tooltip: {
+						callbacks: {
+						label: function (context: any) {
+							let label = context.dataset.label || "";
+							if (label) {
+							label += ": ";
+							}
+							if (context.parsed.y !== null) {
+							label += context.parsed.y.toFixed(1) + " hrs";
+							}
+							return label;
+						},
+						},
+					},
+				},
+			},
+		},
+		{
+			id: "chart2",
+			name: "Aircraft Type",
+			type: "bar",
+			chartData: {
+				labels: [],
+				datasets: [
+					{
+						label: "Flights",
+						data: [],
+						backgroundColor: "rgba(0, 255, 170, 0.5)",
+						borderColor: "rgba(0, 255, 170, 1)",
+						borderWidth: 1,
+						borderRadius: 5,
+						maxBarThickness: 48,
+					},
+				],
+			},
+			chartOptions: {
+				responsive: true,
+				maintainAspectRatio: false,
+			},
+		},
+		{
+			id: "chart3",
+			name: "Flight Rules",
+			type: "pie",
+			chartData: {
+				labels: ["VFR", "IFR"],
+				datasets: [
+					{
+						label: "Flight Rules",
+						data: [],
+						backgroundColor: ["#DD3434", "#313ED8"],
+					},
+				],
+			},
+			chartOptions: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					tooltip: {
+						callbacks: {
+						label: function (context: any) {
+							const label = context.label || '';
+							const value = context.dataset.data[context.dataIndex];
+							return `${label}: ${value} hrs`;
+						},
+						},
+					},
+					legend: {
+						position: 'bottom',
+					}
+				},
+			},
+		}
+	];
+
+	// Use a computed property to generate chart data reactively
+    get computedCharts() {
+        if (!this.user?.logbookEntries) {
+            return []; // Return empty array if user data is not yet available
+        }
+
+        const logbookEntries = this.user.logbookEntries;
+        const activeMonthIndices = this.getMonthsWithActivity(logbookEntries);
+        const monthLabels = this.getMonthLabels(logbookEntries);
+
+		// Filter counts and totals to only include active months
+        const filteredMonthCounts = this.getMonthCounts(logbookEntries).filter((_, index) =>
+            activeMonthIndices.includes(index)
+        );
+        const filteredMonthTotals = this.getMonthTotals(logbookEntries).filter((_, index) =>
+            activeMonthIndices.includes(index)
+        ); // Convert to 'HH:mm' format
+
+        // Calculate data for Flight Hours chart
+        const flightHoursChartData = {
+            labels: monthLabels,
+            datasets: [
+                {
+                    label: "Flights",
+                    backgroundColor: "#DD3434",
+                    borderColor: "#DD3434",
+                    data: filteredMonthCounts,
+                    tension: 0.7,
+                    cubicInterpolationMode: "monotone",
+                },
+                {
+                    label: "Hours",
+                    backgroundColor: "#313ED8",
+                    borderColor: "#313ED8",
+                    data: filteredMonthTotals, // Use 'decimal' for calculations
+                    tension: 0.7,
+                    cubicInterpolationMode: "monotone",
+                },
+            ],
+        };
+
+        // Calculate data for Aircraft Type chart
+        const aircraftTypeData = this.getAircraftTypeData(logbookEntries);
+        const aircraftTypeChartData = {
+            labels: aircraftTypeData.labels,
+            datasets: [
+                {
+                    label: "Flights",
+                    data: aircraftTypeData.data,
+                    backgroundColor: "rgba(0, 255, 170, 0.75)",
+                    borderColor: "rgba(0, 255, 170, 0.25)",
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    maxBarThickness: 48,
+                },
+            ],
+        };
+
+		const flightRuleHours = this.getFlightRuleHours(logbookEntries);
+		const flightRuleHoursData = {
+			labels: ["VFR", "IFR"],
+			datasets: [
+				{
+					label: "Flight Rules",
+					data: [flightRuleHours.vfr, flightRuleHours.ifr],
+					backgroundColor: ["#DD3434", "#313ED8"],
+					// change on hover
+					hoverBackgroundColor: ["#DD3434", "#313ED8"],
+					borderColor: "#09090B",
+					borderWidth: 0,
+				},
+			],
+		};
+
+
+        // Combine raw chart definitions with computed data
+        return this.rawCharts.map(chart => {
+            if (chart.id === "chart1") {
+                return { ...chart, chartData: flightHoursChartData };
+            } else if (chart.id === "chart2") {
+                return { ...chart, chartData: aircraftTypeChartData };
+            } else if (chart.id === "chart3") {
+				return { ...chart, chartData: flightRuleHoursData }
+			}
+            return chart;
+        });
+    }
+
+    // Helper method to get monthly flight counts
+    getMonthCounts(entries: any[]) {
+        const counts = Array(12).fill(0);
+        entries.forEach(entry => {
+            const date = new Date(entry.date);
+            // Ensure date is valid before getting month
+            if (!isNaN(date.getTime())) {
+                const month = date.getMonth(); // 0 for Jan, 1 for Feb, etc.
+                counts[month]++;
+            }
+        });
+        return counts; // Return full 12-month array
+    }
+
+    // Helper method to get monthly total hours
+    getMonthTotals(entries: any[]) {
+        const totals = Array(12).fill(0);
+        entries.forEach(entry => {
+            const date = new Date(entry.date);
+            // Ensure date is valid before getting month
+            if (!isNaN(date.getTime())) {
+                const month = date.getMonth();
+                // IMPORTANT: If 'total' is a Decimal.js object, use entry.total.toNumber()
+                // Otherwise, Number() is fine for Int or converting string to number.
+                // Add nullish coalescing for safety.
+                totals[month] += Number(entry.total ?? 0);
+            }
+        });
+        return totals; // Return full 12-month array
+    }
+
+	getMonthsWithActivity(entries: any[]) {
+        const counts = this.getMonthCounts(entries);
+        const totals = this.getMonthTotals(entries);
+        const activeMonths: number[] = []; // Array of month indices (0-11) that have activity
+
+        for (let i = 0; i < 12; i++) {
+            if (counts[i] > 0 || totals[i] > 0) {
+                activeMonths.push(i);
+            }
+        }
+        return activeMonths;
+    }
+
+    // Modified getMonthLabels
+    getMonthLabels(entries: any[]) {
+        const activeMonthIndices = this.getMonthsWithActivity(entries);
+        const allMonthNames = Array.from({ length: 12 }, (_, i) =>
+            new Date(2000, i, 1).toLocaleString("default", { month: "long" }) // Use a dummy date for month names
+        );
+
+        return activeMonthIndices.map(index => allMonthNames[index]);
+    }
+
+    // Helper method to get aircraft type counts
+    getAircraftTypeData(entries: any[]) {
+        const aircraftCounts: { [key: string]: number } = {};
+        entries.forEach(entry => {
+            const aircraftReg = entry.aircraftRegistration;
+            if (aircraftReg) {
+                aircraftCounts[aircraftReg] = (aircraftCounts[aircraftReg] || 0) + 1;
+            }
+        });
+        const labels = Object.keys(aircraftCounts);
+        const data = Object.values(aircraftCounts);
+        return { labels, data };
+    }
+
+	getFlightRuleHours(entries: any[]) {
+		const hours = { vfr: 0, ifr: 0 };
+
+		entries.forEach((entry) => {
+			if (entry.sepVfr) {
+				hours.vfr += Number(entry.sepVfr);
+			}
+			if (entry.sepIfr) {
+				hours.ifr += Number(entry.sepIfr);
+			}
+			if (entry.meVfr) {
+				hours.vfr += Number(entry.meVfr);
+			}
+			if (entry.meIfr) {
+				hours.ifr += Number(entry.meIfr);
+			}
+		});
+
+		return {
+			vfr: hours.vfr.toFixed(2),
+			ifr: hours.ifr.toFixed(2),
+		};
+	}
+
+	fetchWeatherData() {
+		if (!this.user?.homeAirport) {
+			return console.warn("Home airport not set for user.");
+		}
+
+		axios.get(`http://localhost:7700/gen/wx/${this.user.homeAirport}`)
+		.then((response) => {
+			let { data } = response.data;
+			this.wx = { metar: data.rawOb, taf: data.rawTaf }
+		})
+		.catch((error) => {
+			console.error("Error fetching METAR data:", error);
+		});
+	}
+
+	async login() {
 		const token = localStorage.getItem("accessToken");
 		if (!token) {
 			this.$router.push("/login");
@@ -237,6 +414,8 @@ export default class UserView extends Vue {
 			if (!res) throw new Error("Failed to fetch user data");
 
 			this.user = res.data;
+
+			this.fetchWeatherData()
 		} catch (e) {
 			console.error("Error fetching user data:", e);
 			this.$router.push("/login");
@@ -244,70 +423,39 @@ export default class UserView extends Vue {
 		}
 	}
 
+	async created() {
+		this.login();		
+
+
+	}
+
 	async mounted() {
 		
-
-		try {
-			/*
-			const res = await axios.get("http://localhost:3000/aviwx/" + this.User.homeAirport);
-			if (!res) throw new Error("Failed to fetch flights");
-			const data = {
-				rawMetar: res.data?.[0]?.rawOb,
-				rawTaf: res.data?.[0]?.rawTaf,
-				brokenTaf: [] as string[],
-				brokenDown: res.data?.[0],
-			};
-
-			let keywords = ["BECMG", "TEMPO", "FM", "PROB"];
-			let tokens = data.rawTaf.split(" ").slice(4);
-
-			let blocks = [];
-			let currentBlock: string[] = [];
-
-			tokens.forEach((token: string) => {
-				if (keywords.includes(token) && currentBlock.length) {
-					blocks.push(currentBlock.join(" "));
-					currentBlock = [token];
-				} else {
-					currentBlock.push(token);
-				}
-			});
-
-			if (currentBlock.length) blocks.push(currentBlock.join(" "));
-
-			data.brokenTaf = blocks;
-
-			this.AviWx = data;*/
-		} catch (err) {
-			console.error("Error fetching flights:", err);
-
-			this.AviWx = {
-				rawMetar: "Not found",
-				rawTaf: "Not found",
-				brokenTaf: ["Not found"],
-				brokenDown: {},
-			};
-		}
 	}
 
 	mostFlownAcft = () => {
-		let mostFlown = User.value.flights.reduce((acc: any, flight: any) => {
-			acc[flight.acft] = (acc[flight.acft] || 0) + 1;
+		if (!this.user?.logbookEntries || this.user.logbookEntries.length === 0) {
+			return "No flights";
+		}
+		const aircraftCount = this.user.logbookEntries.reduce((acc: any, entry: any) => {
+			acc[entry.aircraftRegistration] = (acc[entry.aircraftRegistration] || 0) + 1;
 			return acc;
 		}, {});
-		let mostFlownAcft = Object.keys(mostFlown).reduce((a, b) =>
-			mostFlown[a] > mostFlown[b] ? a : b,
+
+		const mostFlownAcft = Object.keys(aircraftCount).reduce((a, b) =>
+			aircraftCount[a] > aircraftCount[b] ? a : b,
 		);
-		return mostFlownAcft;
+
+		return mostFlownAcft || "No flights";
 	};
 
 	nextChart = () => {
-		MainChartIndex.value = (MainChartIndex.value + 1) % charts.length;
-	};
-	previousChart = () => {
-		MainChartIndex.value =
-			(MainChartIndex.value - 1 + charts.length) % charts.length;
-	};
+        chartsDisplayIndex.value = (chartsDisplayIndex.value + 1) % this.computedCharts.length;
+    };
+    previousChart = () => {
+        chartsDisplayIndex.value =
+            (chartsDisplayIndex.value - 1 + this.computedCharts.length) % this.computedCharts.length;
+    };
 
 	shareProfile() {
 		if (navigator.share) {
@@ -332,7 +480,7 @@ export default class UserView extends Vue {
 <template>
 	<div class="w-full max-w-5xl mx-auto mt-14">
 		<div class="grid grid-cols-4 mt-10 mx-4 lg:mx-0">
-			<img class="h-48 w-48 rounded-full inline-flex" :src="User.icon" alt="" />
+			<img class="h-48 w-48 rounded-full inline-flex" :src="user?.profilePictureUrl ?? 'https://placehold.co/512x512'" alt="" />
 			<div class="col-span-2">
 				<h1 class="text-8xl font-bold capitalize">{{ user?.firstName }}</h1>
 				<div class="grid grid-cols-2 gap-x-4 mt-4">
@@ -390,17 +538,20 @@ export default class UserView extends Vue {
 
 		<div class="mt-6 mx-4 lg:mx-0 grid lg:grid-cols-3 gap-6 mb-6">
 			<div class="lg:col-span-2 p-4 rounded-lg ring-2 ring-white/50">
-				<component
-					:is="
-						(ChartComponents as any)[
-							(Charts as any)[MainChartIndex as any].type
-						]
-					"
-					:key="(Charts as any)[MainChartIndex as any].id"
-					:data="(Charts as any)[MainChartIndex as any].chartData"
-					:options="(Charts as any)[MainChartIndex as any].chartOptions"
-				>
-				</component>
+				<div class="w-full h-64 lg:h-84">
+					<component
+                    :is="
+                        (ChartComponents as any)[
+                            (computedCharts)[chartsDisplayIndex]?.type
+                        ]
+                    "
+                    :key="(computedCharts)[chartsDisplayIndex]?.id"
+                    :data="(computedCharts)[chartsDisplayIndex]?.chartData" 
+                    :options="(computedCharts)[chartsDisplayIndex]?.chartOptions"
+					>
+					</component>
+				</div>
+				
 				<div class="w-1/3 mx-auto flex justify-between mt-2 relative">
 					<svg
 						@click="previousChart"
@@ -418,7 +569,7 @@ export default class UserView extends Vue {
 						/>
 					</svg>
 					<span class="text-white/75">
-						{{ (Charts as any)[MainChartIndex as any].name }}
+						 {{ (computedCharts as any)[chartsDisplayIndex as any]?.name }}
 					</span>
 					<svg
 						@click="nextChart"
@@ -454,11 +605,11 @@ export default class UserView extends Vue {
 				<div class="w-1/4 mx-auto flex justify-center space-x-2 mt-2">
 					<span
 						ref="ChartRef"
-						v-for="chart in Charts"
+						v-for="chart in computedCharts"
 						:key="(chart as any).id"
 						class="text-white/50 h-1 w-1 rounded-full bg-white"
 						:class="
-							MainChartIndex === (Charts as any).indexOf(chart)
+							chartsDisplayIndex === (computedCharts as any).indexOf(chart)
 								? 'bg-white'
 								: 'bg-white/25'
 						"
@@ -476,12 +627,23 @@ export default class UserView extends Vue {
 				<div class="mt-2 space-y-1">
 					<div class="flex justify-between">
 						<span class="text-white/50">Flight Time</span>
-						<span class="justify-end">{{ User.stats.hours }}hrs</span>
+						<span class="justify-end" v-if="user?.logbookEntries">
+							{{
+								user?.logbookEntries.map((u: any) => Number(u.total)).reduce(
+									(acc: number, entry: any) => acc + entry,
+									0
+								).toFixed(2).replace(/\.00$/, "")
+							}}
+							hrs
+						</span>
 					</div>
 
 					<div class="flex justify-between">
 						<span class="text-white/50">Flown</span>
-						<span class="justify-end">{{ User.stats.flights }} flights</span>
+						<span class="justify-end" v-if="user?.logbookEntries">
+							{{ user?.logbookEntries.length }} 
+							flights
+						</span>
 					</div>
 
 					<div class="flex justify-between">
@@ -527,8 +689,9 @@ export default class UserView extends Vue {
 					<div class="overflow-y-scroll max-h-46 custom-scrollbar">
 						<a
 							class="grid grid-cols-4 px-4 py-2 mr-2 rounded-md hover:opacity-75 transition-all duration-150"
-							v-for="(act, index) in User.flights.sort(
-								(a: any, b: any) => b.date - a.date,
+							v-for="(entry, index) in user?.logbookEntries.sort(
+								// convert date strings to Date objects for sorting
+								(a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 							)"
 							:class="
 								index % 2 === 0
@@ -536,13 +699,13 @@ export default class UserView extends Vue {
 									: ''
 							"
 							:key="index"
-							:href="'/logbook#' + act.id"
+							:href="'/logbook#' + entry.id"
 						>
-							<span class="text-sm text-white/50">{{ act.mission }}</span>
-							<span class="text-sm text-white/50">{{ act.acft }}</span>
-							<span class="text-sm text-white/50">{{ act.type }}</span>
+							<span class="text-sm text-white/50">{{ entry.rmks?.split('/')[1] }}</span>
+							<span class="text-sm text-white/50">{{ entry.aircraftRegistration }}</span>
+							<span class="text-sm text-white/50">{{ entry.aircraftType }}</span>
 							<span class="text-sm text-white/50">{{
-								act.date.toLocaleDateString("en-GB", {
+								new Date(entry.date).toLocaleDateString("en-GB", {
 									month: "numeric",
 									day: "numeric",
 									year: "numeric",
@@ -560,19 +723,19 @@ export default class UserView extends Vue {
 					Local Weather
 					
 					<span class="text-sm text-white/25">
-					{{ User.homeAirport }}
+					{{ user?.homeAirport }}
 					</span>
 				</h1>
 
 				<div class="mt-2 space-y-1">
 					<span class="text-sm ring-1 px-2 text-white/50">METAR</span>
 					<code class="text-sm block mb-2">
-						{{ AviWx.rawMetar ?? 'Not found' }}
+						{{ wx?.metar?.replace(user?.homeAirport, '') || "Not found" }}
 					</code>
 
 					<span class="text-sm ring-1 px-2 text-white/50">TAF</span>
 					<code class="text-sm block">
-						{{ AviWx.rawTaf?.replace(/TAF/g, '') ?? 'Not found' }}
+						{{ wx?.taf?.replace(/TAF/g, '').replace(user?.homeAirport, '') || "Not found" }}
 					</code>
 
 				</div>
@@ -582,6 +745,11 @@ export default class UserView extends Vue {
 </template>
 
 <style scoped>
+.main-chart-container {
+    width: 100%;
+    height: 22rem;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
 	width: 10px;
 }
