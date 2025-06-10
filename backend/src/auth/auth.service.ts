@@ -19,6 +19,9 @@ export class AuthService {
       where: {
         email: dto.email,
       },
+      include: {
+        logbookEntries: true,
+      }
     });
 
     if (!user) {
@@ -63,6 +66,7 @@ export class AuthService {
           organizationRole: dto.organizationRole,
           firstName,
           lastName,
+          logbookEntries: [] as any,
         },
       });
 
@@ -79,7 +83,6 @@ export class AuthService {
     }
   }
 
-  
   async signToken(userId: number, email: string): Promise<{accessToken: string}> {
     const payload = {
       sub: userId,

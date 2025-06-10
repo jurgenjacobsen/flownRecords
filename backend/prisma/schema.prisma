@@ -52,15 +52,19 @@ model User {
   admin    Boolean @default(false)
 
   // Logbook
-  logbookEntries LogbookEntry[]  @relation("UserLogbook") 
+  logbookEntries LogbookEntries[]  @relation("UserLogbook") 
 
   @@map("users")
 }
 
-model LogbookEntry {
+model LogbookEntries {
   // Logbook entry identification
   id      Int   @id @default(autoincrement())
-  pilotId Int
+  unique String @unique
+  pilotId Int?
+  
+  userId Int
+  user   User @relation("UserLogbook", fields: [userId], references: [id])
   crewId  Int[]
 
   // Logbook entry metadata
@@ -68,43 +72,40 @@ model LogbookEntry {
   updatedAt DateTime @updatedAt
 
   // Flight data
-  date  DateTime
-  depAd String
-  arrAd String
+  date  DateTime?
+  depAd String?
+  arrAd String?
 
-  offBlock DateTime
-  onBlock  DateTime
+  offBlock DateTime?
+  onBlock  DateTime?
 
-  aircraftType         String
-  aircraftRegistration String
-  picName              String
+  aircraftType         String?
+  aircraftRegistration String?
+  picName              String?
 
-  total             Int
-  dayTime           Int
-  nightTime         Int
-  sepVfr            Int
-  sepIfr            Int
-  meVfr             Int
-  meIfr             Int
-  picTime           Int
-  copilotTime       Int
-  multiPilotTime    Int
-  instructorTime    Int
-  dualTime          Int
-  simTime           Int
-  simInstructorTime Int
+  total             Decimal?
+  dayTime           Decimal?
+  nightTime         Decimal?
+  sepVfr            Decimal?
+  sepIfr            Decimal?
+  meVfr             Decimal?
+  meIfr             Decimal?
+  picTime           Decimal?
+  copilotTime       Decimal?
+  multiPilotTime    Decimal?
+  instructorTime    Decimal?
+  dualTime          Decimal?
+  simTime           Decimal?
+  simInstructorTime Decimal?
 
-  landDay   Int
-  landNight Int
+  landDay   Int?
+  landNight Int?
 
   rmks String?
 
   flightTrack Json[]
 
-  userId Int
-  user   User @relation("UserLogbook", fields: [userId], references: [id])
-
-  @@map("flights")
+  @@map("logbook")
 }
 
 model Organization {
