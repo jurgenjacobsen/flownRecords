@@ -45,8 +45,8 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/user/logbook',
-    alias: ['/me/logbook', '/logbook'],
+    path: '/me/logbook',
+    alias: ['/logbook'],
     name: 'user-logbook',
     component: () => import('@/views/User/Logbook.vue'),
     meta: {

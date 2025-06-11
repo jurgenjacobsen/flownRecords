@@ -520,9 +520,9 @@ export default class UserView extends Vue {
 				</div>
 			</div>
 			<div class="flex flex-col justify-center space-y-3">
-				<Button txt="Edit Profile" link="/user/edit"/>
+				<Button txt="Edit Profile" link="/me/edit"/>
 
-				<Button txt="Logbook" link="/user/logbook"/>
+				<Button txt="Logbook" link="/me/logbook"/>
 
 				<Button txt="Share" @click="shareProfile"/>
 

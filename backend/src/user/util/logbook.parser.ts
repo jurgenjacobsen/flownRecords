@@ -8,14 +8,14 @@ export const csvFilter = (req, file, callback) => {
     callback(null, true);
 }
 
-export const parseCsv = (FileBuffer, userId: number) => {
+export const parseCsv = (FileBuffer, userId: number, fileSource: string) => {
     const data: any[] = [];
 
     return new Promise((resolve, reject) => {
         Readable.from(FileBuffer)
         .pipe(csv())
         .on('data', (row) => {
-            const parsedRow = parseEntry(row, userId);
+            const parsedRow = parseEntry(row, userId, fileSource);
             if (!parsedRow) {
                 return;
             }
@@ -99,7 +99,7 @@ export const parseCsv = (FileBuffer, userId: number) => {
   }
  */
 
-export const parseEntry = (data: any, userId: number) => {
+export const parseEntry = (data: any, userId: number, fileSource: string) => {
     if(!data) {
         throw new Error('No data provided for parsing');
     }
@@ -108,46 +108,53 @@ export const parseEntry = (data: any, userId: number) => {
         throw new Error('No user ID provided for parsing');
     }
 
-    const parsed = {
-        unique: `${data.date}-${data.off_block}-${data.departure_airport_name}-${data.type_of_aircraft}-${data.registration}`,
-        pilotId: userId,
-        crewId: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        date: combineDateAndTime(data.date, data.off_block) || parseDate(data.date) || null,
-        depAd: data.departure_airport_name || 'ZZZZ',
-        arrAd: data.arrival_airport_name || 'ZZZZ',
-
-        offBlock: combineDateAndTime(data.date, data.off_block) || null,
-        onBlock: combineDateAndTime(data.date, data.on_block) || null,
-        aircraftType: data.type_of_aircraft || 'ZZZZ',
-        aircraftRegistration: data.registration || undefined,
-        picName: data.name_of_pilot_in_command,
-
-        total: parseTime(data.total),
-        dayTime: parseTime(data.day),
-        nightTime: parseTime(data.night),
-        sepVfr: parseTime(data.single_engine_vfr),
-        sepIfr: parseTime(data.single_engine_ifr),
-        meVfr: parseTime(data.multi_engine_vfr),
-        meIfr: parseTime(data.multi_engine_ifr),
-        picTime: parseTime(data.pilot_in_command_time),
-        copilotTime: parseTime(data.co_pilot),
-        multiPilotTime: parseTime(data.multi_pilot),
-        instructorTime: parseTime(data.flight_instructor),
-        dualTime: parseTime(data.dual),
-        simTime: parseTime(data.synthetic_training),
-        simInstructorTime: parseTime(data.instructor_synthetic_training),
-        landDay: parseInt(data.landings_day, 10) || 0,
-        landNight: parseInt(data.landings_night, 10) || 0,
-        rmks: data.remarks_and_endorsements || null,
-        flightTrack: [],
+    if(!fileSource) {
+        throw new Error('No file source provided for parsing');
     }
 
-    if((parsed.unique.match(/undefined/g) || []).length > 1) {
-        return null; 
+    if(fileSource.toUpperCase() === 'FLIGHTLOGGER') {
+        const parsed = {
+            unique: `${data.date}-${data.off_block}-${data.departure_airport_name}-${data.type_of_aircraft}-${data.registration}`,
+            pilotId: userId,
+            crewId: [],
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            date: combineDateAndTime(data.date, data.off_block) || parseDate(data.date) || null,
+            depAd: data.departure_airport_name || 'ZZZZ',
+            arrAd: data.arrival_airport_name || 'ZZZZ',
+
+            offBlock: combineDateAndTime(data.date, data.off_block) || null,
+            onBlock: combineDateAndTime(data.date, data.on_block) || null,
+            aircraftType: data.type_of_aircraft || 'ZZZZ',
+            aircraftRegistration: data.registration || undefined,
+            picName: data.name_of_pilot_in_command,
+
+            total: parseTime(data.total),
+            dayTime: parseTime(data.day),
+            nightTime: parseTime(data.night),
+            sepVfr: parseTime(data.single_engine_vfr),
+            sepIfr: parseTime(data.single_engine_ifr),
+            meVfr: parseTime(data.multi_engine_vfr),
+            meIfr: parseTime(data.multi_engine_ifr),
+            picTime: parseTime(data.pilot_in_command_time),
+            copilotTime: parseTime(data.co_pilot),
+            multiPilotTime: parseTime(data.multi_pilot),
+            instructorTime: parseTime(data.flight_instructor),
+            dualTime: parseTime(data.dual),
+            simTime: parseTime(data.synthetic_training),
+            simInstructorTime: parseTime(data.instructor_synthetic_training),
+            landDay: parseInt(data.landings_day, 10) || 0,
+            landNight: parseInt(data.landings_night, 10) || 0,
+            rmks: data.remarks_and_endorsements || null,
+            flightTrack: [],
+        }
+
+        if((parsed.unique.match(/undefined/g) || []).length > 1) {
+            return null; 
+        }
+
+        return parsed;
     }
-    return parsed;
 }
 
 export const parseTime = (timeString: string): number => {
