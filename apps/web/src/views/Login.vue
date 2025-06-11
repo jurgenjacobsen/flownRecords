@@ -28,7 +28,6 @@ export default class Login extends Vue {
 		}
 
 		try {
-			console.log("Sending login data:", form);
 			axios.post("http://localhost:7700/auth/signin", form)
 			.then(response => {
 				if (response.status === 200) {

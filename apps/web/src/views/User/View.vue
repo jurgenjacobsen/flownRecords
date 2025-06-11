@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import { ref, markRaw } from "vue";
+
 import axios from "axios";
 
 import { Bar, Line, Doughnut, Pie } from "vue-chartjs";
@@ -16,7 +17,9 @@ import {
 	LineElement,
 	ArcElement,
 } from "chart.js";
+
 import Button from "@/components/Button.vue";
+import FlownRoutesMap from "@/components/user/FlownRoutesMap.vue";
 
 ChartJS.register(
 	Title,
@@ -36,6 +39,60 @@ const ChartComponents = { bar: Bar, line: Line, doughnut: Doughnut, pie: Pie };
 const user = ref() as any;
 const wx = ref() as any;
 
+const TEST_FLIGHTS = [
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "FNC", lat: 32.697, lon: -16.774 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "OPO", lat: 41.248, lon: -8.681 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "FAO", lat: 37.014, lon: -7.965 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "PDL", lat: 37.741, lon: -25.675 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "LPA", lat: 27.931, lon: -15.386 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "TFS", lat: 28.044, lon: -16.572 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "SVQ", lat: 37.421, lon: -5.893 },
+	},
+	{
+		from: { icao: "LIS", lat: 38.774, lon: -9.134 },
+		to: { icao: "MAD", lat: 40.493, lon: -3.566 },
+	},
+	{
+		from: { icao: "FRA", lat: 50.033, lon: 8.570 },
+		to: { icao: "AMS", lat: 52.308, lon: 4.763 },
+	},
+	{
+		from: { icao: "FNC", lat: 32.697, lon: -16.774 },
+		to: { icao: "OPO", lat: 41.248, lon: -8.681 },
+	},
+	// PDL TO FAR
+	{
+		from: { icao: "PDL", lat: 37.741, lon: -25.675 },
+		to: { icao: "FAR", lat: 46.920, lon: -96.814 },
+	},
+	// PDL TO FAO
+	{
+		from: { icao: "PDL", lat: 37.741, lon: -25.675 },
+		to: { icao: "FAO", lat: 37.014, lon: -7.965 },
+	},
+];
+
+
 @Options({
 	components: {
 		Bar: markRaw(Bar),
@@ -43,10 +100,14 @@ const wx = ref() as any;
 		Doughnut: markRaw(Doughnut),
 		Pie: markRaw(Pie),
 		Button,
+		FlownRoutesMap
 	},
 })
 
 export default class UserView extends Vue {
+
+	TEST_FLIGHTS = TEST_FLIGHTS;
+
 	user = user;
 	wx = wx;
 
@@ -425,8 +486,6 @@ export default class UserView extends Vue {
 
 	async created() {
 		this.login();		
-
-
 	}
 
 	async mounted() {
@@ -472,10 +531,6 @@ export default class UserView extends Vue {
 }
 
 </script>
-
-<style scoped>
-
-</style>
 
 <template>
 	<div class="w-full max-w-5xl mx-auto mt-14">
@@ -530,10 +585,8 @@ export default class UserView extends Vue {
 		</div>
 
 
-		<div class="h-96 rounded-lg mt-6 ring-2 ring-white/50 flex items-center justify-center">
-			<h1 class="text-4xl font-semibold text-white/25">
-				Map
-			</h1>
+		<div class="h-96 rounded-lg mt-6 ring-2 ring-white/50 flex items-center justify-center overflow-hidden">
+			<FlownRoutesMap :flights="TEST_FLIGHTS"/>
 		</div>
 
 		<div class="mt-6 mx-4 lg:mx-0 grid lg:grid-cols-3 gap-6 mb-6">
@@ -636,6 +689,9 @@ export default class UserView extends Vue {
 							}}
 							hrs
 						</span>
+						<span class="justify-end" v-else>
+							-
+						</span>
 					</div>
 
 					<div class="flex justify-between">
@@ -643,6 +699,9 @@ export default class UserView extends Vue {
 						<span class="justify-end" v-if="user?.logbookEntries">
 							{{ user?.logbookEntries.length }} 
 							flights
+						</span>
+						<span class="justify-end" v-else>
+							-
 						</span>
 					</div>
 
