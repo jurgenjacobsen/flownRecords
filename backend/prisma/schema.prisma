@@ -101,6 +101,8 @@ model LogbookEntries {
   landDay   Int?
   landNight Int?
 
+  includeInFt Boolean @default(true)
+
   rmks String?
 
   flightTrack Json[]

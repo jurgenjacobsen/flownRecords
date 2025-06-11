@@ -66,7 +66,6 @@ export class AuthService {
           organizationRole: dto.organizationRole,
           firstName,
           lastName,
-          logbookEntries: [] as any,
         },
       });
 

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { parseCsv } from './util';
 import { LogbookEntries } from '@prisma/client';
-import { connect } from 'http2';
 
 @Injectable()
 export class UserService {
@@ -87,7 +86,7 @@ export class UserService {
             throw new Error('File source is required');
         }
 
-        const buffer = file.buffer;
+        const buffer = file?.buffer;
         if(!buffer) {
             throw new Error('No file data provided');
         }

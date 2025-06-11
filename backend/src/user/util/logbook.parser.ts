@@ -1,7 +1,9 @@
 import { Readable } from "stream";
+import { Request } from "express";
+
 import * as csv from "csv-parser";
 
-export const csvFilter = (req, file, callback) => {
+export const csvFilter = (req: Request, file, callback) => {
     if (!file.originalname.match(/\.(csv)$/)) {
         return callback(new Error('Only CSV files are allowed!'), false);
     }
@@ -27,77 +29,6 @@ export const parseCsv = (FileBuffer, userId: number, fileSource: string) => {
         .on('error', reject);
     });
 };
-
-
-/* 
-{
-      id: number
-      pilotId: number
-      crewId: number[]
-      createdAt: Date
-      updatedAt: Date
-      date: Date
-      depAd: string
-      arrAd: string
-      offBlock: Date
-      onBlock: Date
-      aircraftType: string
-      aircraftRegistration: string
-      picName: string
-      total: number
-      dayTime: number
-      nightTime: number
-      sepVfr: number
-      sepIfr: number
-      meVfr: number
-      meIfr: number
-      picTime: number
-      copilotTime: number
-      multiPilotTime: number
-      instructorTime: number
-      dualTime: number
-      simTime: number
-      simInstructorTime: number
-      landDay: number
-      landNight: number
-      rmks: string | null
-      flightTrack: Prisma.JsonValue[]
-      userId: number
-    }
-*/
-
-/*
- * 
-{
-    date: '29.05.2025',
-    departure_airport_name: 'LPVL',
-    off_block: '10:45',
-    arrival_airport_name: 'LPVL',
-    on_block: '13:30',
-    type_of_aircraft: '1E',
-    registration: 'CS-EDU',
-    name_of_pilot_in_command: 'F-DLD 24011 JGJ',
-    total: '2:45',
-    day: '2:45',
-    night: '',
-    single_engine_vfr: '2:45',
-    single_engine_ifr: '',
-    multi_engine_vfr: '',
-    multi_engine_ifr: '',
-    pilot_in_command_time: '2:45',
-    co_pilot: '',
-    multi_pilot: '',
-    flight_instructor: '',
-    dual: '',
-    synthetic_training: '',
-    instructor_synthetic_training: '',
-    landings_day: '5',
-    landings_night: '',
-    remarks_and_endorsements: 'ATP(A) (Vol 5) CBTA / NAV 08 / F-DLD',
-    include_in_ftl: 'true',
-    if_time: ''
-  }
- */
 
 export const parseEntry = (data: any, userId: number, fileSource: string) => {
     if(!data) {
@@ -145,6 +76,7 @@ export const parseEntry = (data: any, userId: number, fileSource: string) => {
             simInstructorTime: parseTime(data.instructor_synthetic_training),
             landDay: parseInt(data.landings_day, 10) || 0,
             landNight: parseInt(data.landings_night, 10) || 0,
+            includeInFt: data?.include_in_ftl ? data.include_in_ftl?.toLowerCase() === 'true' : false,
             rmks: data.remarks_and_endorsements || null,
             flightTrack: [],
         }
