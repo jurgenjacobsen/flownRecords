@@ -150,7 +150,7 @@ export default class GetStarted extends Vue {
 <template>
 	<Splash uppertext="Register" />
 
-	<div class="w-full max-w-5xl mx-auto px-10 mt-14">
+	<div class="w-full max-w-5xl mx-auto px-4 md:px-10 mt-14">
 		<h2 class="text-3xl font-semibold text-white/75 mb-10">
 			Fill out your information
 		</h2>
@@ -223,8 +223,6 @@ export default class GetStarted extends Vue {
 				displayProperty="label"
 				:showItemCircle="false"
 			/>
-
-			
 
 			<div class="flex flex-col">
 				<label class="text-sm text-white/75 mb-1">password</label>

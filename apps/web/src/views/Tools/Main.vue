@@ -36,7 +36,7 @@ export default class ToolsMain extends Vue {
             </p>
         </div>
 
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">
             <a v-for="tool in tools" :key="tool.name" :href="tool.link"
             class="relative bg-gradient-to-br to-neutral-900 from-neutral-800 rounded-lg p-6 text-white overflow-hidden ring-2 ring-white/50 hover:opacity-75 transition-all duration-300">
                 <h2 class="text-xl font-semibold">{{ tool.name }}</h2>

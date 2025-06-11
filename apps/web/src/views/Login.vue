@@ -98,7 +98,9 @@ export default class Login extends Vue {
 			</h2>
 		</div>
 
-		<form class="max-w-xl mx-auto grid gap-6" @submit.prevent="signIn" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
+		<form 
+		class="max-w-xl mx-auto grid gap-6 px-4 md:px-0" 
+		@submit.prevent="signIn" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
 			<div class="flex flex-col">
 				<label class="text-sm text-white/75 mb-1">email</label>
 				<input
@@ -129,8 +131,8 @@ export default class Login extends Vue {
 			</div>
 
 			<div class="flex justify-between">
-				<Button txt="Create new account" link="/getstarted" class="px-[10%]"/>
-				<Button txt="Login" type="submit" @click="signIn" class="px-[20%]"/>
+				<Button txt="Create new account" link="/getstarted" class="md:px-[10%]"/>
+				<Button txt="Login" type="submit" @click="signIn" class="md:px-[20%]"/>
 			</div>
 		</form>
 	</div>

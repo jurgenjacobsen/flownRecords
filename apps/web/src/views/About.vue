@@ -39,7 +39,7 @@ export default class About extends Vue {
 	<Splash uppertext="About" />
 
 	<div class="w-full max-w-5xl mx-auto mt-14">
-		<div class="w-3/4 mx-auto">
+		<div class="px-6 md:px-10 mx-auto">
 			<h1 class="text-4xl font-bold mt-2">Our Mission</h1>
 			<p class="text-white/75">
 				Flown Records is a platform that aims to provide a comprehensive and
@@ -52,7 +52,7 @@ export default class About extends Vue {
 			</p>
 		</div>
 
-		<div class="w-3/4 mx-auto mt-4">
+		<div class="px-6 md:px-10 mx-auto mt-4">
 			<h1 class="text-4xl font-bold mt-2 text-right">Our History</h1>
 			<p class="text-white/75 text-right">
 				Flown Records was founded in 2023 by a group of aviation enthusiasts who
@@ -65,9 +65,9 @@ export default class About extends Vue {
 			</p>
 		</div>
 
-		<div class="w-3/4 mx-auto mt-4">
+		<div class="px-6 md:px-10 mx-auto mt-4">
 			<h1 class="text-4xl font-bold mt-2">Our Team</h1>
-			<div class="grid grid-cols-3 gap-6 mt-4 mb-6">
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4 mb-6">
 				<div
 					v-for="member in Team"
 					:key="member.id"
