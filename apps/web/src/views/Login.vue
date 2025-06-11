@@ -21,6 +21,30 @@ export default class Login extends Vue {
 	email = email;
 	pw = pw;
 
+	async login() {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return;
+
+		try {
+			const res = await axios.get("http://localhost:7700/users/me", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}).catch((err) => {
+				if (err.response?.status === 401) {
+					
+				} else {
+					console.error("Error fetching user data:", err);
+				}
+			});
+			
+			if (!res) throw new Error("Failed to fetch user data");
+			return window.location.href = "/me";
+		} catch (e) {
+			return;
+		}
+	}
+
 	signIn() {
 		const form = {
 			email: this.email,
@@ -39,7 +63,7 @@ export default class Login extends Vue {
 
 					localStorage.setItem('accessToken', token);
 
-					return this.$router.push("/me");
+					return window.location.href = "/me";
 				} else {
 					alert("Login failed: " + response.data.message);
 				}
@@ -56,6 +80,10 @@ export default class Login extends Vue {
 			alert("An error occurred during login. Please try again later.");
 			return;
 		}
+	}
+
+	created() {
+		this.login();
 	}
 }
 </script>

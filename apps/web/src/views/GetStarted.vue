@@ -43,6 +43,8 @@ const pw = ref('');
 const pwConfirm = ref('');
 const termsAccepted = ref(false);
 
+const user = (ref({}) as unknown) as any;
+
 @Options({
 	components: {
 		Splash,
@@ -51,6 +53,7 @@ const termsAccepted = ref(false);
 	},
 })
 export default class GetStarted extends Vue {
+	user = user;
 	selectedOrganization = selectedOrganization;
 	selectedRole = selectedRole;
 	allOrganizations = allOrganizations;
@@ -64,6 +67,31 @@ export default class GetStarted extends Vue {
 	pw = pw;
 	pwConfirm = pwConfirm;
 	termsAccepted = termsAccepted;
+
+	async login() {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return;
+
+		try {
+			const res = await axios.get("http://localhost:7700/users/me", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}).catch((err) => {
+				if (err.response?.status === 401) {
+					
+				} else {
+					console.error("Error fetching user data:", err);
+				}
+			});
+			
+			if (!res) throw new Error("Failed to fetch user data");
+
+			return window.location.href = "/me";
+		} catch (e) {
+			return;
+		}
+	}
 
 	signUp() {
 		const form = {
@@ -98,7 +126,7 @@ export default class GetStarted extends Vue {
 
 					localStorage.setItem('accessToken', token);
 
-					return this.$router.push("/me");
+					return window.location.href = "/me";
 				} else {
 					alert("Registration failed. Please try again.");
 				}
@@ -111,6 +139,10 @@ export default class GetStarted extends Vue {
 			alert("An error occurred while submitting your registration. Please try again later.");
 			return;
 		}
+	}
+
+	created() {
+		this.login();
 	}
 }
 </script>
