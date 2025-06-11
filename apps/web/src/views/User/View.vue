@@ -184,16 +184,22 @@ export default class UserView extends Vue {
 				plugins: {
 					tooltip: {
 						callbacks: {
-						label: function (context: any) {
-							let label = context.dataset.label || "";
-							if (label) {
-							label += ": ";
+							label: function (context: any) {
+								let label = context.dataset.label || "";
+
+								if (label) {
+									label += ": ";
+								}
+
+								if (context.parsed.y !== null) {
+									const isHours = context.dataset.label === "Hours";
+									label += isHours
+										? context.parsed.y.toFixed(1) + " hrs"
+										: context.parsed.y.toFixed(0);
+								}
+
+								return label;
 							}
-							if (context.parsed.y !== null) {
-							label += context.parsed.y.toFixed(1) + " hrs";
-							}
-							return label;
-						},
 						},
 					},
 				},
@@ -494,7 +500,7 @@ export default class UserView extends Vue {
 
 	mostFlownAcft = () => {
 		if (!this.user?.logbookEntries || this.user.logbookEntries.length === 0) {
-			return "No flights";
+			return "-";
 		}
 		const aircraftCount = this.user.logbookEntries.reduce((acc: any, entry: any) => {
 			acc[entry.aircraftRegistration] = (acc[entry.aircraftRegistration] || 0) + 1;
@@ -505,8 +511,64 @@ export default class UserView extends Vue {
 			aircraftCount[a] > aircraftCount[b] ? a : b,
 		);
 
-		return mostFlownAcft || "No flights";
+		return mostFlownAcft || "-";
 	};
+
+	mostVisitedAirport = () => {
+		if(!this.user?.logbookEntries || this.user.logbookEntries.length === 0) {
+			return "-";
+		}
+
+		return this?.user?.logbookEntries
+		.map((entry: any) => entry.depAd)
+		.reduce(
+			(acc: any, icao: string) => {
+				acc[icao] = (acc[icao] || 0) + 1;
+				return acc;
+			},
+			{}
+		)
+		? Object.entries(
+			this?.user?.logbookEntries
+				.map((entry: any) => entry.arrAd)
+				.reduce(
+					(acc: any, icao: string) => {
+						acc[icao] = (acc[icao] || 0) + 1;
+						return acc;
+					},
+					{}
+				)
+		).reduce((a: any, b: any) => (a[1] > b[1] ? a : b))[0]
+		: "-"
+	}
+
+	totalFlightTime = () => {
+		if (!this.user?.logbookEntries || this.user.logbookEntries.length === 0) {
+			return "-";
+		}
+
+		console.log(this.user.logbookEntries);
+		const total =
+		this.user.logbookEntries
+		.map((entry: any) => entry.includeInFt ? Number(entry.total) : 0)
+		.reduce((acc: number, entry: any) => acc + entry, 0);
+
+		// Convert to HH:mm format
+		const hours = total.toFixed(0);
+		const minutes = Math.round((total % 1) * 60);
+		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+	};
+
+	numberOfFlights = () => {
+		if (!this.user?.logbookEntries || this.user.logbookEntries.length === 0) {
+			return "-";
+		}
+
+		//const flightCount = this.user.logbookEntries.filter((entry: any) => entry.includeInFt).length;
+		return this.user.logbookEntries.length;
+	};
+
+	// Methods to navigate through charts
 
 	nextChart = () => {
         chartsDisplayIndex.value = (chartsDisplayIndex.value + 1) % this.computedCharts.length;
@@ -680,15 +742,7 @@ export default class UserView extends Vue {
 				<div class="mt-2 space-y-1">
 					<div class="flex justify-between">
 						<span class="text-white/50">Flight Time</span>
-						<span class="justify-end" v-if="user?.logbookEntries">
-							{{
-								user?.logbookEntries.map((u: any) => Number(u.total)).reduce(
-									(acc: number, entry: any) => acc + entry,
-									0
-								).toFixed(2).replace(/\.00$/, "")
-							}}
-							hrs
-						</span>
+						<span class="justify-end" v-if="user?.logbookEntries">{{ totalFlightTime() }}</span>
 						<span class="justify-end" v-else>
 							-
 						</span>
@@ -696,18 +750,20 @@ export default class UserView extends Vue {
 
 					<div class="flex justify-between">
 						<span class="text-white/50">Flown</span>
-						<span class="justify-end" v-if="user?.logbookEntries">
-							{{ user?.logbookEntries.length }} 
-							flights
-						</span>
-						<span class="justify-end" v-else>
-							-
-						</span>
+						<span class="justify-end" v-if="user?.logbookEntries">{{ numberOfFlights() }}</span>
+						<span class="justify-end" v-else>-</span>
 					</div>
 
 					<div class="flex justify-between">
 						<span class="text-white/50">Most flown aircraft</span>
-						<span class="justify-end">{{ mostFlownAcft() }}</span>
+						<span class="justify-end"  v-if="user?.logbookEntries">{{ mostFlownAcft() }}</span>
+						<span class="justify-end" v-else>-</span>
+					</div>
+
+					<div class="flex justify-between">
+						<span class="text-white/50">Most visited airport</span>
+						<span class="justify-end" v-if="user?.logbookEntries">{{ mostVisitedAirport() }}</span>
+						<span class="justify-end" v-else>-</span>
 					</div>
 				</div>
 			</div>
