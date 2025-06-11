@@ -43,6 +43,8 @@ const pw = ref('');
 const pwConfirm = ref('');
 const termsAccepted = ref(false);
 
+const user = (ref({}) as unknown) as any;
+
 @Options({
 	components: {
 		Splash,
@@ -51,6 +53,7 @@ const termsAccepted = ref(false);
 	},
 })
 export default class GetStarted extends Vue {
+	user = user;
 	selectedOrganization = selectedOrganization;
 	selectedRole = selectedRole;
 	allOrganizations = allOrganizations;
@@ -64,6 +67,31 @@ export default class GetStarted extends Vue {
 	pw = pw;
 	pwConfirm = pwConfirm;
 	termsAccepted = termsAccepted;
+
+	async login() {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return;
+
+		try {
+			const res = await axios.get("http://localhost:7700/users/me", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}).catch((err) => {
+				if (err.response?.status === 401) {
+					
+				} else {
+					console.error("Error fetching user data:", err);
+				}
+			});
+			
+			if (!res) throw new Error("Failed to fetch user data");
+
+			return window.location.href = "/me";
+		} catch (e) {
+			return;
+		}
+	}
 
 	signUp() {
 		const form = {
@@ -98,7 +126,7 @@ export default class GetStarted extends Vue {
 
 					localStorage.setItem('accessToken', token);
 
-					return this.$router.push("/me");
+					return window.location.href = "/me";
 				} else {
 					alert("Registration failed. Please try again.");
 				}
@@ -112,13 +140,17 @@ export default class GetStarted extends Vue {
 			return;
 		}
 	}
+
+	created() {
+		this.login();
+	}
 }
 </script>
 
 <template>
 	<Splash uppertext="Register" />
 
-	<div class="w-full max-w-5xl mx-auto px-10 mt-14">
+	<div class="w-full max-w-5xl mx-auto px-4 md:px-10 mt-14">
 		<h2 class="text-3xl font-semibold text-white/75 mb-10">
 			Fill out your information
 		</h2>
@@ -191,8 +223,6 @@ export default class GetStarted extends Vue {
 				displayProperty="label"
 				:showItemCircle="false"
 			/>
-
-			
 
 			<div class="flex flex-col">
 				<label class="text-sm text-white/75 mb-1">password</label>

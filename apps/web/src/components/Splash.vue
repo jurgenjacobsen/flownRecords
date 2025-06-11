@@ -1,6 +1,6 @@
 <template>
     <div class="text-center">
-    <div class="mt-20">
+    <div class="mt-10 md:mt-20">
       <div class="text-3xl font-bold text-white/25 h-[1.875rem]">
         {{ uppertext }}
       </div>

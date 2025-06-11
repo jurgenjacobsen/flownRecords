@@ -45,7 +45,7 @@ export default class OrganizationsPage extends Vue {
 			</p>
 		</div>
 
-		<div class="grid grid-cols-2 gap-6">
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">
 			<a
 				v-for="organization in Organizations"
 				:key="organization.id"

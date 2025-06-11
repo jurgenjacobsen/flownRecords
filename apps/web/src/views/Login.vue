@@ -21,6 +21,30 @@ export default class Login extends Vue {
 	email = email;
 	pw = pw;
 
+	async login() {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return;
+
+		try {
+			const res = await axios.get("http://localhost:7700/users/me", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}).catch((err) => {
+				if (err.response?.status === 401) {
+					
+				} else {
+					console.error("Error fetching user data:", err);
+				}
+			});
+			
+			if (!res) throw new Error("Failed to fetch user data");
+			return window.location.href = "/me";
+		} catch (e) {
+			return;
+		}
+	}
+
 	signIn() {
 		const form = {
 			email: this.email,
@@ -39,7 +63,7 @@ export default class Login extends Vue {
 
 					localStorage.setItem('accessToken', token);
 
-					return this.$router.push("/me");
+					return window.location.href = "/me";
 				} else {
 					alert("Login failed: " + response.data.message);
 				}
@@ -57,6 +81,10 @@ export default class Login extends Vue {
 			return;
 		}
 	}
+
+	created() {
+		this.login();
+	}
 }
 </script>
 
@@ -70,7 +98,9 @@ export default class Login extends Vue {
 			</h2>
 		</div>
 
-		<form class="max-w-xl mx-auto grid gap-6" @submit.prevent="signIn" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
+		<form 
+		class="max-w-xl mx-auto grid gap-6 px-4 md:px-0" 
+		@submit.prevent="signIn" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off">
 			<div class="flex flex-col">
 				<label class="text-sm text-white/75 mb-1">email</label>
 				<input
@@ -101,8 +131,8 @@ export default class Login extends Vue {
 			</div>
 
 			<div class="flex justify-between">
-				<Button txt="Create new account" link="/getstarted" class="px-[10%]"/>
-				<Button txt="Login" type="submit" @click="signIn" class="px-[20%]"/>
+				<Button txt="Create new account" link="/getstarted" class="md:px-[10%]"/>
+				<Button txt="Login" type="submit" @click="signIn" class="md:px-[20%]"/>
 			</div>
 		</form>
 	</div>
