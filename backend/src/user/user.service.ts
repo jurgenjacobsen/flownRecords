@@ -82,13 +82,17 @@ export class UserService {
         });
     }
 
-    async updateLogbook(userId: number, data: any) {
-        const buffer = data.buffer;
+    async updateLogbook(userId: number, fileSource: string, file: any) {
+        if (!fileSource) {
+            throw new Error('File source is required');
+        }
+
+        const buffer = file.buffer;
         if(!buffer) {
             throw new Error('No file data provided');
         }
 
-        let parsed = await parseCsv(buffer, userId);
+        let parsed = await parseCsv(buffer, userId, fileSource);
 
         if (!Array.isArray(parsed) || parsed.length === 0) {
             throw new Error('No valid logbook entries found in the file');

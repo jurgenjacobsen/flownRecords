@@ -33,8 +33,19 @@ export class UserController {
     @UseInterceptors(
         FileInterceptor('file', { fileFilter: csvFilter } )
     )
-    updateLogbook(@GetUser() user: User, @UploadedFile() file: Express.Multer.File) {
-        return this.userService.updateLogbook(user.id, file);
+    updateLogbook(@GetUser() user: User, 
+        @Body() body,
+        @UploadedFile() file: Express.Multer.File
+    ) {
+        if (!body?.source) {
+            throw new Error('File source is required');
+        }
+
+        if (!file) {
+            throw new Error('File is required');
+        }
+
+        return this.userService.updateLogbook(user.id, body.source, file);
     }
 
     @Get(':username')

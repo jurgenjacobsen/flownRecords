@@ -13,7 +13,7 @@
       autocomplete="off"
     />
     <div
-      v-show="showDropdown && filteredItems.length > 0"
+      v-show="showDropdown"
       :class="dropdownClass"
       class="absolute top-full left-0 right-0 mt-1 z-10 overflow-hidden"
     >
@@ -43,87 +43,81 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'; // Removed 'toRefs' as it wasn't used
+  import { ref, computed, watch } from 'vue';
 
-// --- Props ---
-const props = defineProps({
-  // Configuration
-  id: { type: String, required: true },
-  label: { type: String, required: true },
-  items: { type: Array, required: true }, // Array of objects [{id: 1, name: '...'}, ...]
-  modelValue: { type: String, default: '' }, // For v-model support
+  const props = defineProps({
+    id: { type: String, required: true },
+    label: { type: String, required: true },
+    items: { type: Array, required: true },
+    modelValue: { type: String, default: '' },
 
-  // Item Handling
-  itemKey: { type: String, default: 'id' }, // Property to use for Vue key :key
-  displayProperty: { type: String, default: 'name' }, // Property of item object to display and filter on
- itemImageProperty: { type: String, default: null }, // Property holding the image URL in the item object
+    // Item Handling
+    itemKey: { type: String, default: 'id' },
+    displayProperty: { type: String, default: 'name' },
+    itemImageProperty: { type: String, default: null },
 
-  // Customization / Styling (Optional - provide defaults)
-  placeholder: { type: String, default: '' },
-  inputClass: { type: String, default: 'bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50' },
-  dropdownClass: { type: String, default: 'bg-secondary ring-1 ring-white/25 rounded-lg shadow-lg' },
-  itemClass: { type: String, default: 'px-4 py-2 hover:bg-white/10 text-white' },
-  itemDividerClass: { type: String, default: 'border-t border-white/25' }, // Class for the divider
- showItemCircle: { type: Boolean, default: true } // Control visibility of the fallback circle
-});
+    placeholder: { type: String, default: '' },
+    inputClass: { type: String, default: 'bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50' },
+    dropdownClass: { type: String, default: 'bg-secondary ring-1 ring-white/25 rounded-lg shadow-lg' },
+    itemClass: { type: String, default: 'px-4 py-2 hover:bg-white/10 text-white' },
+    itemDividerClass: { type: String, default: 'border-t border-white/25' },
+    showItemCircle: { type: Boolean, default: true }
+  });
 
-// --- Emits ---
-const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue']);
 
-// --- Refs ---
-const query = ref(props.modelValue); // Input field's current text
-const showDropdown = ref(false);
+  const query = ref(props.modelValue);
+  const showDropdown = ref(false);
 
-// --- Watchers ---
-watch(() => props.modelValue, (newValue) => {
-  if (query.value !== newValue) {
-    query.value = newValue;
-  }
-});
+  watch(() => props.modelValue, (newValue) => {
+    if (query.value !== newValue) {
+      query.value = newValue;
+    }
+  });
 
-// --- Computed Properties ---
-const filteredItems = computed(() => {
-  // No changes needed here, filtering is based on displayProperty
-  if (!query.value || query.value === props.modelValue) {
-     return [];
-   }
-   const searchQuery = query.value.toLowerCase();
-   return props.items.filter(item =>
-     item[props.displayProperty]?.toLowerCase().includes(searchQuery)
-   );
-});
+  const filteredItems = computed(() => {
+    const searchQuery = query.value?.trim()?.toLowerCase();
 
-// --- Methods ---
-const handleInput = () => {
-    showDropdown.value = true;
-};
+    // If query is empty, show everything
+    if (!searchQuery) {
+      return props.items;
+    }
 
-const selectItem = (item) => {
-  const displayValue = item[props.displayProperty];
-  query.value = displayValue;
-  emit('update:modelValue', displayValue);
-  showDropdown.value = false;
-};
+    return props.items.filter(item =>
+      item[props.displayProperty]?.toLowerCase().includes(searchQuery)
+    );
+  });
 
-const hideDropdown = () => {
-  setTimeout(() => {
-    // Logic for handling blur remains the same
-     if(query.value !== props.modelValue) {
-       // Option 1: Reset to last selected value if user didn't choose
-       // query.value = props.modelValue;
-     }
+  const handleInput = () => {
+      showDropdown.value = true;
+  };
+
+  const selectItem = (item) => {
+    if (item[props.displayProperty] === props.modelValue) return;
+    const displayValue = item[props.displayProperty];
+    query.value = displayValue;
+    emit('update:modelValue', displayValue);
     showDropdown.value = false;
-  }, 150);
-};
+  };
 
-// Optional: Handle image loading errors
-const onImageError = (event) => {
-  console.warn('Image failed to load:', event.target.src);
-  // Optional: replace with a default placeholder image
- // event.target.src = '/path/to/default/placeholder.png';
-  // Or hide the image element and show the circle (more complex state needed)
-  event.target.style.display = 'none'; // Simplest fallback: just hide broken image
-};
+  const hideDropdown = () => {
+    setTimeout(() => {
+      // Logic for handling blur remains the same
+      if(query.value !== props.modelValue) {
+        // Option 1: Reset to last selected value if user didn't choose
+        // query.value = props.modelValue;
+      }
+      showDropdown.value = false;
+    }, 150);
+  };
+
+  const onImageError = (event) => {
+    console.warn('Image failed to load:', event.target.src);
+    // Optional: replace with a default placeholder image
+    // event.target.src = '/path/to/default/placeholder.png';
+    // Or hide the image element and show the circle (more complex state needed)
+    event.target.style.display = 'none';
+  };
 
 </script>
 
