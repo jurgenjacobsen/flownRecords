@@ -45,7 +45,7 @@ export const parseEntry = (data: any, userId: number, fileSource: string) => {
 
     if(fileSource.toUpperCase() === 'FLIGHTLOGGER') {
         const parsed = {
-            unique: `${data.date}-${data.off_block}-${data.departure_airport_name}-${data.type_of_aircraft}-${data.registration}`,
+            unique: `${userId}-${data.date}-${data.off_block}-${data.departure_airport_name}-${data.type_of_aircraft}-${data.registration}`,
             pilotId: userId,
             crewId: [],
             createdAt: new Date(),
