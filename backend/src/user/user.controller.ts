@@ -15,7 +15,7 @@ export class UserController {
 
     @Get('me')
     getMe(@GetUser() user: User) {
-        return user
+        return user;
     }
 
     @Get('all')
@@ -30,28 +30,13 @@ export class UserController {
 
     @HttpCode(HttpStatus.OK)
     @Post('logbook/update')
-    @UseInterceptors(
-        FileInterceptor('file', { fileFilter: csvFilter } )
-    )
-    updateLogbook(@GetUser() user: User, 
-        @Body() body,
-        @UploadedFile() file: Express.Multer.File
-    ) {
-        if (!body?.source) {
-            throw new Error('File source is required');
-        }
-
-        if (!file) {
-            throw new Error('File is required');
-        }
-
+    @UseInterceptors(FileInterceptor('file', { fileFilter: csvFilter } ))
+    updateLogbook(@GetUser() user: User, @Body() body, @UploadedFile() file: Express.Multer.File ) {
         return this.userService.updateLogbook(user.id, body.source, file);
     }
 
     @Get(':username')
     getUserByUsername(@Req() req) {
-        const username = req.params.username;
-        return this.userService.getUserByUsername(username);
+        return this.userService.getUserByUsername(req.params?.username);
     }
-
 }
