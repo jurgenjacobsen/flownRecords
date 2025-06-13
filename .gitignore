@@ -61,3 +61,5 @@ lerna-debug.log*
 .tmp
 
 apps/web/src/assets/main.css
+apps/desktop/node_modules
+apps/desktop/out
