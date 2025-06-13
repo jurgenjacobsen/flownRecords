@@ -8,8 +8,6 @@ updateElectronApp({
 
 const path = require('node:path');
 
-const URL = 'https://flown-records.vercel.app';
-
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -23,8 +21,8 @@ const createSplash = () => {
     icon: path.join(__dirname, 'assets', 'icon.png'),
     width: 300,
     height: 350,
-    frame: false,
-    transparent: true,
+    frame: true,
+    transparent: false,
     backgroundColor: '#00000000',
     alwaysOnTop: false,
     center: true,
@@ -53,41 +51,33 @@ const createMain = () => {
     center: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      devTools: false,
+      devTools: true,
     },
   });
 
-  mainWindow.loadURL(URL);
+  //mainWindow.loadURL(URL);
+
+  const file = path.join(__dirname, '../../web/dist/index.html');
+  
+  mainWindow.loadFile(file);
+  
   
   mainWindow.once('ready-to-show', () => {
     mainWindow.maximize();
     mainWindow.show();
-  });
-};
-
-const checkIfOnline = async () => {
-  return new Promise((resolve) => {
-    const request = net.request(URL);
-    request.on('response', (response) => {
-      resolve(response.statusCode >= 200 && response.statusCode < 400);
-    });
-    request.on('error', () => resolve(false));
-    request.end();
+    if (splashWindow) {
+      splashWindow.close();
+    }
   });
 };
 
 app.whenReady().then(async () => {
   splashWindow = createSplash();
 
-  const isOnline = await checkIfOnline();
-
   splashWindow.webContents.once('did-finish-load', () => {
-    if (isOnline) {
-      setTimeout(() => {
-        if (splashWindow) splashWindow.close();
+    setTimeout(() => {
         createMain();
       }, 2000);
-    }
   });
 
   app.on('activate', () => {
