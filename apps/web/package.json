@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "tail": "npx @tailwindcss/cli -i ./src/assets/input.css -o ./src/assets/main.css --watch"
+    "build:prod": "npm run tailwind:build && vue-cli-service build",
+    "tailwind:watch": "npx @tailwindcss/cli -i ./src/assets/input.css -o ./src/assets/main.css --watch",
+    "tailwind:build": "npx @tailwindcss/cli -i ./src/assets/input.css -o ./src/assets/main.css"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.4",
